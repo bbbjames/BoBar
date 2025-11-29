@@ -51,52 +51,46 @@
             // 
             // button_discord
             // 
-            button_discord.BackColor = SystemColors.Window;
+            button_discord.BackColor = SystemColors.WindowText;
             button_discord.BackgroundImage = (Image)resources.GetObject("button_discord.BackgroundImage");
             button_discord.BackgroundImageLayout = ImageLayout.Center;
             button_discord.Cursor = Cursors.Hand;
             button_discord.FlatAppearance.BorderSize = 0;
-            button_discord.FlatStyle = FlatStyle.Flat;
-            button_discord.Location = new Point(0, 0);
+            button_discord.Location = new Point(0, 4);
             button_discord.Margin = new Padding(0);
             button_discord.Name = "button_discord";
-            button_discord.Size = new Size(84, 84);
+            button_discord.Size = new Size(48, 48);
             button_discord.TabIndex = 0;
             button_discord.UseVisualStyleBackColor = false;
             button_discord.Click += button1_Click;
-            button_discord.MouseDown += FormDrag_MouseDown;
             // 
             // button1
             // 
-            button1.BackColor = SystemColors.Window;
+            button1.BackColor = SystemColors.ButtonFace;
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Center;
             button1.Cursor = Cursors.Hand;
             button1.FlatAppearance.BorderSize = 0;
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(84, 0);
+            button1.Location = new Point(50, 4);
             button1.Name = "button1";
-            button1.Size = new Size(84, 84);
+            button1.Size = new Size(48, 48);
             button1.TabIndex = 1;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click_1;
-            button1.MouseDown += FormDrag_MouseDown;
             // 
             // button2
             // 
-            button2.BackColor = SystemColors.Window;
+            button2.BackColor = SystemColors.ButtonFace;
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Center;
             button2.Cursor = Cursors.Hand;
             button2.FlatAppearance.BorderSize = 0;
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(168, 0);
+            button2.Location = new Point(100, 4);
             button2.Name = "button2";
-            button2.Size = new Size(84, 84);
+            button2.Size = new Size(48, 48);
             button2.TabIndex = 2;
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
-            button2.MouseDown += FormDrag_MouseDown;
             // 
             // contextMenuStrip1
             // 
@@ -143,9 +137,9 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 84);
+            AutoScaleMode = AutoScaleMode.None;
+            BackColor = SystemColors.WindowText;
+            ClientSize = new Size(292, 54);
             ContextMenuStrip = contextMenuStrip1;
             ControlBox = false;
             Controls.Add(button2);

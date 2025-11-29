@@ -1,28 +1,134 @@
+using System.Diagnostics;
+
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
         private const int SnapDistance = 10; // pixels
+        private readonly string _iniPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BobsBar", "settings.ini");
+        private bool _loadingPosition;
 
         public Form1()
         {
             InitializeComponent();
             LocationChanged += Form1_LocationChanged;
+            Load += Form1_Load;
+            FormClosing += Form1_FormClosing;
+        }
+
+        private void Form1_Load(object? sender, EventArgs e)
+        {
+            _loadingPosition = true;
+            
+            // Force exact dimensions to prevent any scaling issues
+            // 4px top padding + 48px button height + 2px bottom padding = 54 height
+            // 3×48 buttons + 2×2px spacing = 152 width (doubled to 292 for extra space)
+            ClientSize = new Size(292, 54);
+            
+            TryLoadWindowLocation();
+            _loadingPosition = false;
+        }
+
+        private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            TrySaveWindowLocation();
+        }
+
+        private void TryLoadWindowLocation()
+        {
+            try
+            {
+                if (!File.Exists(_iniPath)) return;
+
+                int? x = null;
+                int? y = null;
+                bool? alwaysOnTop = null;
+
+                foreach (var line in File.ReadAllLines(_iniPath))
+                {
+                    var trimmed = line.Trim();
+                    if (trimmed.StartsWith("X=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (int.TryParse(trimmed[2..], out var xValue))
+                            x = xValue;
+                    }
+                    else if (trimmed.StartsWith("Y=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (int.TryParse(trimmed[2..], out var yValue))
+                            y = yValue;
+                    }
+                    else if (trimmed.StartsWith("AlwaysOnTop=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (bool.TryParse(trimmed[12..], out var topValue))
+                            alwaysOnTop = topValue;
+                    }
+                }
+
+                if (x.HasValue && y.HasValue)
+                {
+                    var pt = new Point(x.Value, y.Value);
+                    if (Screen.AllScreens.Any(scr => scr.WorkingArea.Contains(pt)))
+                    {
+                        StartPosition = FormStartPosition.Manual;
+                        Location = pt;
+                    }
+                }
+
+                if (alwaysOnTop.HasValue)
+                {
+                    TopMost = alwaysOnTop.Value;
+                    alwaysOnTopToolStripMenuItem.Checked = alwaysOnTop.Value;
+                }
+            }
+            catch
+            {
+                // Swallow exceptions to avoid startup failure
+            }
+        }
+
+        private void TrySaveWindowLocation()
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(_iniPath);
+                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                File.WriteAllLines(_iniPath, new[]
+                {
+                    "[Window]",
+                    $"X={Left}",
+                    $"Y={Top}",
+                    $"AlwaysOnTop={TopMost}"
+                });
+            }
+            catch
+            {
+                // Swallow exceptions to avoid close failure
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("notepad.exe");
+            //MessageBox.Show("Clicked");
+            //System.Diagnostics.Process.Start("notepad.exe"); 
+            Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("notepad.exe");
+            //MessageBox.Show("Clicked");
+            //System.Diagnostics.Process.Start("notepad.exe"); 
+            Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("calc.exe");
+            //MessageBox.Show("Clicked");
+            //System.Diagnostics.Process.Start("notepad.exe"); 
+            Process.Start(new ProcessStartInfo("calc.exe") { UseShellExecute = true });
         }
 
         private void moveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -67,6 +173,8 @@ namespace WinFormsApp1
         // Snap to screen edges when moving
         private void Form1_LocationChanged(object? sender, EventArgs e)
         {
+            if (_loadingPosition) return;
+
             var screen = Screen.FromPoint(Location);
             var wa = screen.WorkingArea; // exclude taskbar
 
