@@ -35,46 +35,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             button_discord = new Button();
             button1 = new Button();
             button2 = new Button();
-            contextMenuStrip1 = new ContextMenuStrip();
+            contextMenuStrip1 = new ContextMenuStrip(components);
             moveToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            closeToolStripMenuItem = new ToolStripMenuItem();
             alwaysOnTopToolStripMenuItem = new ToolStripMenuItem();
+            closeToolStripMenuItem = new ToolStripMenuItem();
+            contextMenuStrip1.SuspendLayout();
             SuspendLayout();
-            // contextMenuStrip1
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, closeToolStripMenuItem });
-            // moveToolStripMenuItem
-            moveToolStripMenuItem.Name = "moveToolStripMenuItem";
-            moveToolStripMenuItem.Text = "Move";
-            moveToolStripMenuItem.Click += moveToolStripMenuItem_Click;
-            // settingsToolStripMenuItem
-            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Text = "Settings";
-            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
-            // aboutToolStripMenuItem
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Text = "About";
-            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
-            // alwaysOnTopToolStripMenuItem
-            alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
-            alwaysOnTopToolStripMenuItem.Text = "Always on top";
-            alwaysOnTopToolStripMenuItem.CheckOnClick = true;
-            alwaysOnTopToolStripMenuItem.Checked = TopMost; // reflect current
-            alwaysOnTopToolStripMenuItem.Click += alwaysOnTopToolStripMenuItem_Click;
-            // closeToolStripMenuItem
-            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            closeToolStripMenuItem.Text = "Close";
-            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
             // button_discord
             // 
             button_discord.BackColor = SystemColors.Window;
-            button_discord.BackgroundImage = BobsBar.Properties.Resources.discord;
+            button_discord.BackgroundImage = (Image)resources.GetObject("button_discord.BackgroundImage");
             button_discord.BackgroundImageLayout = ImageLayout.Center;
             button_discord.Cursor = Cursors.Hand;
             button_discord.FlatAppearance.BorderSize = 0;
@@ -120,20 +98,64 @@
             button2.Click += button2_Click;
             button2.MouseDown += FormDrag_MouseDown;
             // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new Size(32, 32);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(239, 194);
+            // 
+            // moveToolStripMenuItem
+            // 
+            moveToolStripMenuItem.Name = "moveToolStripMenuItem";
+            moveToolStripMenuItem.Size = new Size(238, 38);
+            moveToolStripMenuItem.Text = "Move";
+            moveToolStripMenuItem.Click += moveToolStripMenuItem_Click;
+            // 
+            // settingsToolStripMenuItem
+            // 
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(238, 38);
+            settingsToolStripMenuItem.Text = "Settings";
+            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
+            // 
+            // aboutToolStripMenuItem
+            // 
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new Size(238, 38);
+            aboutToolStripMenuItem.Text = "About";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            // 
+            // alwaysOnTopToolStripMenuItem
+            // 
+            alwaysOnTopToolStripMenuItem.CheckOnClick = true;
+            alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
+            alwaysOnTopToolStripMenuItem.Size = new Size(238, 38);
+            alwaysOnTopToolStripMenuItem.Text = "Always on top";
+            alwaysOnTopToolStripMenuItem.Click += alwaysOnTopToolStripMenuItem_Click;
+            // 
+            // closeToolStripMenuItem
+            // 
+            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            closeToolStripMenuItem.Size = new Size(238, 38);
+            closeToolStripMenuItem.Text = "Close";
+            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 84);
+            ContextMenuStrip = contextMenuStrip1;
+            ControlBox = false;
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(button_discord);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "Form1";
             Text = "Form1";
-            FormBorderStyle = FormBorderStyle.None;
-            ControlBox = false;
-            ContextMenuStrip = contextMenuStrip1;
             MouseDown += FormDrag_MouseDown;
+            contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
