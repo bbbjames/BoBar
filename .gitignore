@@ -1,0 +1,239 @@
+# Visual Studio
+.vs/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[bB]in/
+[oO]bj/
+[Ll]og/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+Generated Files/
+
+# Build-related
+*.xcassets
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# and targets or props
+!**/packages/*.targets
+!**/packages/*.props
+
+# MSBuild binary and object caches
+msbuild1
+msbuild2
+
+# Azure
+*.publishsettings
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Dump files
+*.dmp
+
+# TFS
+$tf/
+
+# Profiling
+*.psess
+*.vsp
+*.vspx
+
+# Others
+*.log
+*.tlog
+*.svclog
+*.pidb
+*.mdb
+*.opendb
+*.scc
+*_i.c
+*_p.c
+*_h.h
+*.dbmdl
+*.bak
+*.backup
+*.tmp
+*.tmp_proj
+*.svclog
+*.pdb
+*.cache
+*.excludedeploy
+*.publish.xml
+*.pubxml
+*.publishproj
+
+# Local history
+.history/
+
+# DotCover
+.idea/.idea.DotSettings
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# StyleCop
+StyleCopReport.xml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Web workbench (sass)
+.sass-cache/
+
+# SpecFlow
+*.feature.cs
+
+# DocProject
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# ClickOnce
+publish/
+
+# Publish output
+app.publish/
+
+# Windows Installer
+*.msi
+*.msm
+*.msp
+
+# Local Test Runs
+TestResults/
+
+# Entity Framework
+*.edmx.diagram
+
+# Backup & report files from converting an old project file
+*.Backup
+*.Report.xml
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Node.js tools for Visual Studio
+.ntvs_analysis.dat
+node_modules/
+
+# TypeScript v1 declaration files
+typings/
+
+# Visual Studio 6 build log
+*.plg
+
+# Visual Studio 6 workspace options file
+*.opt
+
+# Visual Studio 6 auto-generated workspace file
+*.vbw
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+
+# F#
+*.fsi
+*.fsx
+
+# Python Tools for Visual Studio (PTVS)
+__pycache__/
+*.pyc
+
+# VS Code workspace setting files
+*.code-workspace
+
+# OS generated files
+.DS_Store
+Icon?
+
+# JetBrains caches
+.idea/
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Core
+appsettings.Local.json
+
+# Temporary files
+~$*
+
+# Lock files
+*.lock
+
+# Docker
+**/.dockerignore
+**/Dockerfile*
+**/.containerignore
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Git
+*.orig
+
+# Ignore trace and benchmark outputs
+BenchmarkDotNet.Artifacts/
+
+# Windows Forms specific
+# Keep designer files tracked; ignore local user config
+*.local.config
+
+# Ensure not ignoring important source files
+!**/*.cs
+!**/*.csproj
+!**/*.sln
+!**/*.resx
+!**/*.config
+!**/*.json
