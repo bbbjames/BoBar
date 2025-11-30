@@ -46,9 +46,6 @@
             alwaysOnTopToolStripMenuItem = new ToolStripMenuItem();
             darkModeToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
-            button0 = new Button();
-            button1 = new Button();
-            button2 = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -113,69 +110,11 @@
             closeToolStripMenuItem.Size = new Size(238, 40);
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
-            // 
-            // button0
-            // 
-            button0.BackColor = Color.FromArgb(45, 45, 45);
-            button0.BackgroundImage = (Image)resources.GetObject("button0.BackgroundImage");
-            button0.BackgroundImageLayout = ImageLayout.Zoom;
-            button0.Cursor = Cursors.Hand;
-            button0.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
-            button0.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
-            button0.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
-            button0.FlatStyle = FlatStyle.Flat;
-            button0.Location = new Point(10, 3);
-            button0.Margin = new Padding(10, 3, 0, 0);
-            button0.Name = "button0";
-            button0.Size = new Size(40, 40);
-            button0.TabIndex = 0;
-            button0.UseVisualStyleBackColor = false;
-            button0.Click += button0_Click;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.FromArgb(45, 45, 45);
-            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
-            button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
-            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(60, 3);
-            button1.Margin = new Padding(10, 3, 0, 0);
-            button1.Name = "button1";
-            button1.Size = new Size(40, 40);
-            button1.TabIndex = 1;
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(45, 45, 45);
-            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
-            button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
-            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
-            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.ForeColor = SystemColors.ControlText;
-            button2.Location = new Point(110, 3);
-            button2.Margin = new Padding(10, 3, 0, 0);
-            button2.Name = "button2";
-            button2.Size = new Size(40, 40);
-            button2.TabIndex = 2;
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
-            // 
+            //
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.AutoSize = true;
             flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel1.Controls.Add(button0);
-            flowLayoutPanel1.Controls.Add(button1);
-            flowLayoutPanel1.Controls.Add(button2);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -206,9 +145,6 @@
 
         #endregion
 
-        private Button button0;
-        private Button button1;
-        private Button button2;
         private FlowLayoutPanel flowLayoutPanel1;
         private NotifyIcon notifyIcon1;
     }

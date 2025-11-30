@@ -1,4 +1,5 @@
  using System.Drawing;
+using System.Text.Json;
 
 namespace BoBar
 {
@@ -12,14 +13,16 @@ namespace BoBar
     public class ConfigurationManager
     {
         private readonly string _configPath;
+        private readonly string _launchItemsPath;
 
         public ConfigurationManager()
         {
-            _configPath = Path.Combine(
+            var appDataPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "BoBar",
-                "settings.ini"
-            );
+                "BoBar");
+            
+            _configPath = Path.Combine(appDataPath, "settings.ini");
+            _launchItemsPath = Path.Combine(appDataPath, "launchitems.json");
         }
 
         public AppConfiguration LoadConfiguration()
@@ -122,6 +125,56 @@ namespace BoBar
                 return false;
 
             return bool.TryParse(line[prefix.Length..], out value);
+        }
+
+        public List<LaunchItem> LoadLaunchItems()
+        {
+            try
+            {
+                if (!File.Exists(_launchItemsPath))
+                    return GetDefaultLaunchItems();
+
+                var json = File.ReadAllText(_launchItemsPath);
+                var items = JsonSerializer.Deserialize<List<LaunchItem>>(json);
+                return items?.OrderBy(x => x.Order).ToList() ?? GetDefaultLaunchItems();
+            }
+            catch
+            {
+                return GetDefaultLaunchItems();
+            }
+        }
+
+        public void SaveLaunchItems(List<LaunchItem> items)
+        {
+            try
+            {
+                var directory = Path.GetDirectoryName(_launchItemsPath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                
+                var json = JsonSerializer.Serialize(items, options);
+                File.WriteAllText(_launchItemsPath, json);
+            }
+            catch
+            {
+                // Silently handle save failures to prevent application shutdown issues
+            }
+        }
+
+        private static List<LaunchItem> GetDefaultLaunchItems()
+        {
+            return new List<LaunchItem>
+            {
+                new LaunchItem("notepad.exe") { Name = "Notepad", Order = 0 },
+                new LaunchItem("calc.exe") { Name = "Calculator", Order = 1 }
+            };
         }
     }
 }

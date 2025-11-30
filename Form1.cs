@@ -12,11 +12,14 @@ namespace BoBar
         
         private readonly ConfigurationManager _configManager = new();
         private AppConfiguration _config = new();
+        private List<LaunchItem> _launchItems = new();
         private bool _loadingPosition;
 
         public Form1()
         {
             InitializeComponent();
+            LoadLaunchItems();
+            CreateDynamicButtons();
             AddButtonSeparators();
             EnsureTrayIcon();
             LocationChanged += Form1_LocationChanged;
@@ -136,6 +139,7 @@ namespace BoBar
             BackColor = Color.Fuchsia;
             TransparencyKey = Color.Fuchsia;
 
+            SetupDragDrop();
             TryLoadWindowLocation();
             _loadingPosition = false;
         }
@@ -168,21 +172,6 @@ namespace BoBar
             _configManager.SaveConfiguration(_config, Location);
         }
 
-        private void button0_Click(object sender, EventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("calc.exe") { UseShellExecute = true });
-        }
-
         private void moveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NativeMethods.ReleaseCapture();
@@ -191,7 +180,8 @@ namespace BoBar
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "Settings not implemented.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using var settingsForm = new SettingsForm(_configManager, _launchItems, RefreshButtons);
+            settingsForm.ShowDialog(this);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -284,6 +274,130 @@ namespace BoBar
             if (newX != Left || newY != Top)
             {
                 Location = new Point(newX, newY);
+            }
+        }
+
+        private void LoadLaunchItems()
+        {
+            _launchItems = _configManager.LoadLaunchItems();
+        }
+
+        private void CreateDynamicButtons()
+        {
+            if (flowLayoutPanel1 == null) return;
+
+            // Clear existing dynamic buttons (keep only static ones for now)
+            var dynamicButtons = flowLayoutPanel1.Controls.OfType<Button>()
+                .Where(b => b.Tag?.ToString() == "Dynamic")
+                .ToList();
+
+            foreach (var button in dynamicButtons)
+            {
+                flowLayoutPanel1.Controls.Remove(button);
+                button.Dispose();
+            }
+
+            // Create buttons for each launch item
+            for (int i = 0; i < _launchItems.Count; i++)
+            {
+                var item = _launchItems[i];
+                var button = new Button
+                {
+                    Size = new Size(40, 40),
+                    TabIndex = i,
+                    UseVisualStyleBackColor = false,
+                    FlatStyle = FlatStyle.Flat,
+                    Tag = "Dynamic",
+                    BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
+                    Margin = new Padding(3, 17, 0, 0)
+                };
+
+                button.FlatAppearance.BorderSize = 1;
+                if (_config.DarkMode)
+                {
+                    button.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+                    button.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+                    button.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+                }
+                else
+                {
+                    button.FlatAppearance.BorderColor = SystemColors.ScrollBar;
+                    button.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
+                    button.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
+                }
+
+                // Set button icon
+                var icon = item.GetIcon();
+                if (icon != null)
+                {
+                    button.BackgroundImage = icon.ToBitmap();
+                    button.BackgroundImageLayout = ImageLayout.Zoom;
+                }
+
+                // Set click handler
+                button.Click += (s, e) => item.Launch();
+
+                flowLayoutPanel1.Controls.Add(button);
+            }
+        }
+
+        private void RefreshButtons()
+        {
+            LoadLaunchItems();
+            CreateDynamicButtons();
+            AddButtonSeparators();
+            ApplyTheme();
+        }
+
+        private void SetupDragDrop()
+        {
+            AllowDrop = true;
+            
+            DragEnter += (s, e) =>
+            {
+                if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+                {
+                    var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+                    e.Effect = files.Any(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase))
+                        ? DragDropEffects.Copy
+                        : DragDropEffects.None;
+                }
+            };
+
+            DragDrop += (s, e) =>
+            {
+                if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+                {
+                    var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+                    foreach (var file in files.Where(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        AddLaunchItemFromDrop(file);
+                    }
+                }
+            };
+        }
+
+        private void AddLaunchItemFromDrop(string executablePath)
+        {
+            try
+            {
+                var newItem = new LaunchItem(executablePath)
+                {
+                    Order = _launchItems.Count
+                };
+
+                _launchItems.Add(newItem);
+                _configManager.SaveLaunchItems(_launchItems);
+                RefreshButtons();
+
+                // Show confirmation
+                MessageBox.Show(this, $"Added {newItem.Name} to launcher", "Item Added", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Failed to add {Path.GetFileName(executablePath)}: {ex.Message}", 
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
