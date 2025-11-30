@@ -5,13 +5,14 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        private const int SnapDistance = 10; // pixels
+        private const int SnapDistance = 10;
         private const int SeparatorWidth = 1;
         private const int SeparatorTopMargin = 17;
         private static readonly Color SeparatorColor = Color.FromArgb(80, 80, 80);
         
         private readonly string _iniPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BobsBar", "settings.ini");
         private bool _loadingPosition;
+        private bool _isDarkMode = true;
 
         public Form1()
         {
@@ -153,6 +154,7 @@ namespace WinFormsApp1
                 int? x = null;
                 int? y = null;
                 bool? alwaysOnTop = null;
+                bool? darkMode = null;
 
                 foreach (var line in File.ReadAllLines(_iniPath))
                 {
@@ -172,6 +174,11 @@ namespace WinFormsApp1
                         if (bool.TryParse(trimmed[12..], out var topValue))
                             alwaysOnTop = topValue;
                     }
+                    else if (trimmed.StartsWith("DarkMode=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (bool.TryParse(trimmed[9..], out var darkModeValue))
+                            darkMode = darkModeValue;
+                    }
                 }
 
                 if (x.HasValue && y.HasValue)
@@ -188,6 +195,13 @@ namespace WinFormsApp1
                 {
                     TopMost = alwaysOnTop.Value;
                     alwaysOnTopToolStripMenuItem.Checked = alwaysOnTop.Value;
+                }
+
+                if (darkMode.HasValue)
+                {
+                    _isDarkMode = darkMode.Value;
+                    darkModeToolStripMenuItem.Checked = darkMode.Value;
+                    ApplyTheme();
                 }
             }
             catch
@@ -211,7 +225,8 @@ namespace WinFormsApp1
                     "[Window]",
                     $"X={Left}",
                     $"Y={Top}",
-                    $"AlwaysOnTop={TopMost}"
+                    $"AlwaysOnTop={TopMost}",
+                    $"DarkMode={_isDarkMode}"
                 });
             }
             catch
@@ -262,6 +277,38 @@ namespace WinFormsApp1
             if (sender is ToolStripMenuItem item)
             {
                 TopMost = item.Checked;
+            }
+        }
+
+        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem item)
+            {
+                _isDarkMode = item.Checked;
+                ApplyTheme();
+            }
+        }
+
+        private void ApplyTheme()
+        {
+            var buttons = flowLayoutPanel1.Controls.OfType<Button>();
+
+            foreach (var button in buttons)
+            {
+                if (_isDarkMode)
+                {
+                    button.BackColor = Color.FromArgb(45, 45, 45);
+                    button.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+                    button.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+                    button.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+                }
+                else
+                {
+                    button.BackColor = Color.FromArgb(0, 0, 0, 0);
+                    button.FlatAppearance.BorderColor = SystemColors.MenuBar;
+                    button.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
+                    button.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
+                }
             }
         }
 

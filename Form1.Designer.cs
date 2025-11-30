@@ -8,6 +8,7 @@
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem closeToolStripMenuItem;
         private ToolStripMenuItem alwaysOnTopToolStripMenuItem;
+        private ToolStripMenuItem darkModeToolStripMenuItem;
 
         /// <summary>
         ///  Required designer variable.
@@ -43,6 +44,7 @@
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             alwaysOnTopToolStripMenuItem = new ToolStripMenuItem();
+            darkModeToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             button0 = new Button();
             button1 = new Button();
@@ -62,28 +64,28 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new Size(32, 32);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, darkModeToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(239, 194);
+            contextMenuStrip1.Size = new Size(239, 244);
             // 
             // moveToolStripMenuItem
             // 
             moveToolStripMenuItem.Name = "moveToolStripMenuItem";
-            moveToolStripMenuItem.Size = new Size(238, 38);
+            moveToolStripMenuItem.Size = new Size(238, 40);
             moveToolStripMenuItem.Text = "Move";
             moveToolStripMenuItem.Click += moveToolStripMenuItem_Click;
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(238, 38);
+            settingsToolStripMenuItem.Size = new Size(238, 40);
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(238, 38);
+            aboutToolStripMenuItem.Size = new Size(238, 40);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
@@ -91,14 +93,24 @@
             // 
             alwaysOnTopToolStripMenuItem.CheckOnClick = true;
             alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
-            alwaysOnTopToolStripMenuItem.Size = new Size(238, 38);
+            alwaysOnTopToolStripMenuItem.Size = new Size(238, 40);
             alwaysOnTopToolStripMenuItem.Text = "Always on top";
             alwaysOnTopToolStripMenuItem.Click += alwaysOnTopToolStripMenuItem_Click;
+            // 
+            // darkModeToolStripMenuItem
+            // 
+            darkModeToolStripMenuItem.Checked = true;
+            darkModeToolStripMenuItem.CheckOnClick = true;
+            darkModeToolStripMenuItem.CheckState = CheckState.Checked;
+            darkModeToolStripMenuItem.Name = "darkModeToolStripMenuItem";
+            darkModeToolStripMenuItem.Size = new Size(238, 40);
+            darkModeToolStripMenuItem.Text = "Dark mode";
+            darkModeToolStripMenuItem.Click += darkModeToolStripMenuItem_Click;
             // 
             // closeToolStripMenuItem
             // 
             closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            closeToolStripMenuItem.Size = new Size(238, 38);
+            closeToolStripMenuItem.Size = new Size(238, 40);
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
@@ -140,13 +152,13 @@
             // 
             // button2
             // 
-            button2.BackColor = Color.FromArgb(0, 0, 0, 0);
+            button2.BackColor = Color.FromArgb(45, 45, 45);
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderColor = SystemColors.MenuBar;
-            button2.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
-            button2.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
+            button2.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
             button2.FlatStyle = FlatStyle.Flat;
             button2.ForeColor = SystemColors.ControlText;
             button2.Location = new Point(110, 3);
