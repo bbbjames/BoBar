@@ -1,4 +1,4 @@
-namespace WinFormsApp1
+namespace BoBar
 {
     internal static class Program
     {

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Drawing;
 
-namespace WinFormsApp1
+namespace BoBar
 {
     public partial class Form1 : Form
     {
@@ -196,7 +196,7 @@ namespace WinFormsApp1
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "Example launcher v1", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, "BoBar Launcher v1.0", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)

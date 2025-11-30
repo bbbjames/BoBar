@@ -1,6 +1,6 @@
  using System.Drawing;
 
-namespace WinFormsApp1
+namespace BoBar
 {
     public class AppConfiguration
     {
@@ -17,7 +17,7 @@ namespace WinFormsApp1
         {
             _configPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "BobsBar",
+                "BoBar",
                 "settings.ini"
             );
         }

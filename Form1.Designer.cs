@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1
+﻿namespace BoBar
 {
     partial class Form1
     {
