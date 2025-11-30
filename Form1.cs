@@ -1,30 +1,135 @@
 using System.Diagnostics;
+using System.Drawing;
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
         private const int SnapDistance = 10; // pixels
+        private const int SeparatorWidth = 1;
+        private const int SeparatorTopMargin = 17;
+        private static readonly Color SeparatorColor = Color.FromArgb(80, 80, 80);
+        
         private readonly string _iniPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BobsBar", "settings.ini");
         private bool _loadingPosition;
 
         public Form1()
         {
             InitializeComponent();
+            AddButtonSeparators();
+            EnsureTrayIcon();
             LocationChanged += Form1_LocationChanged;
             Load += Form1_Load;
             FormClosing += Form1_FormClosing;
         }
 
+        private void AddButtonSeparators()
+        {
+            if (flowLayoutPanel1 == null) return;
+
+            var buttons = flowLayoutPanel1.Controls
+                .OfType<Button>()
+                .Cast<Control>()
+                .ToList();
+
+            if (buttons.Count == 0) return;
+
+            flowLayoutPanel1.SuspendLayout();
+            try
+            {
+                var existingSeparators = flowLayoutPanel1.Controls
+                    .OfType<Panel>()
+                    .Where(p => p.Tag?.ToString() == "Separator")
+                    .ToList();
+
+                foreach (var sep in existingSeparators)
+                {
+                    flowLayoutPanel1.Controls.Remove(sep);
+                    sep.Dispose();
+                }
+
+                int separatorHeight = buttons.Count > 0 ? buttons[0].Height : 26;
+
+                for (int i = 0; i < buttons.Count - 1; i++)
+                {
+                    int insertIndex = flowLayoutPanel1.Controls.IndexOf(buttons[i]) + 1;
+                    var separator = CreateSeparator(separatorHeight);
+                    flowLayoutPanel1.Controls.Add(separator);
+                    flowLayoutPanel1.Controls.SetChildIndex(separator, insertIndex);
+                }
+            }
+            finally
+            {
+                flowLayoutPanel1.ResumeLayout(true);
+            }
+        }
+
+        private Panel CreateSeparator(int height)
+        {
+            return new Panel
+            {
+                Width = SeparatorWidth,
+                Height = height,
+                BackColor = SeparatorColor,
+                Margin = new Padding(0, SeparatorTopMargin, 0, 0),
+                Tag = "Separator",
+                AccessibleName = "Separator",
+                TabStop = false
+            };
+        }
+
+        private void EnsureTrayIcon()
+        {
+            try
+            {
+                // Prefer the form icon if set via resources/designer
+                var icon = this.Icon;
+
+                // Fallback to assets icon on disk
+                if (icon is null)
+                {
+                    var assetPath = Path.Combine(AppContext.BaseDirectory, "assets", "bobar-256.ico");
+                    if (File.Exists(assetPath))
+                    {
+                        icon = new Icon(assetPath);
+                    }
+                }
+
+                // Fallback to the executable's associated icon
+                if (icon is null)
+                {
+                    icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                }
+
+                // Final fallback to a default application icon
+                icon ??= SystemIcons.Application;
+
+                // Apply to both form and tray icon
+                this.Icon ??= icon;
+                if (notifyIcon1 != null)
+                {
+                    notifyIcon1.Icon = icon;
+                    notifyIcon1.Visible = true;
+                }
+            }
+            catch
+            {
+                // As a last resort ensure tray icon is visible with a default icon
+                if (notifyIcon1 != null)
+                {
+                    notifyIcon1.Icon = SystemIcons.Application;
+                    notifyIcon1.Visible = true;
+                }
+            }
+        }
+
         private void Form1_Load(object? sender, EventArgs e)
         {
             _loadingPosition = true;
-            
-            // Force exact dimensions to prevent any scaling issues
-            // 4px top padding + 48px button height + 2px bottom padding = 54 height
-            // 3×48 buttons + 2×2px spacing = 152 width (doubled to 292 for extra space)
-            ClientSize = new Size(292, 54);
-            
+
+            BackColor = Color.Fuchsia;
+            TransparencyKey = Color.Fuchsia;
+
             TryLoadWindowLocation();
             _loadingPosition = false;
         }
@@ -110,24 +215,18 @@ namespace WinFormsApp1
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button0_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Clicked");
-            //System.Diagnostics.Process.Start("notepad.exe"); 
             Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Clicked");
-            //System.Diagnostics.Process.Start("notepad.exe"); 
             Process.Start(new ProcessStartInfo("notepad.exe") { UseShellExecute = true });
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Clicked");
-            //System.Diagnostics.Process.Start("notepad.exe"); 
             Process.Start(new ProcessStartInfo("calc.exe") { UseShellExecute = true });
         }
 
@@ -168,6 +267,12 @@ namespace WinFormsApp1
                 NativeMethods.ReleaseCapture();
                 NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0); // WM_NCLBUTTONDOWN + HTCAPTION
             }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object? sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.Activate();
         }
 
         // Snap to screen edges when moving

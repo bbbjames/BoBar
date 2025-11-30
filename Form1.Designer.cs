@@ -37,60 +37,27 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            button_discord = new Button();
-            button1 = new Button();
-            button2 = new Button();
+            notifyIcon1 = new NotifyIcon(components);
             contextMenuStrip1 = new ContextMenuStrip(components);
             moveToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             alwaysOnTopToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
+            button0 = new Button();
+            button1 = new Button();
+            button2 = new Button();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // button_discord
+            // notifyIcon1
             // 
-            button_discord.BackColor = SystemColors.WindowText;
-            button_discord.BackgroundImage = (Image)resources.GetObject("button_discord.BackgroundImage");
-            button_discord.BackgroundImageLayout = ImageLayout.Center;
-            button_discord.Cursor = Cursors.Hand;
-            button_discord.FlatAppearance.BorderSize = 0;
-            button_discord.Location = new Point(0, 4);
-            button_discord.Margin = new Padding(0);
-            button_discord.Name = "button_discord";
-            button_discord.Size = new Size(48, 48);
-            button_discord.TabIndex = 0;
-            button_discord.UseVisualStyleBackColor = false;
-            button_discord.Click += button1_Click;
-            // 
-            // button1
-            // 
-            button1.BackColor = SystemColors.ButtonFace;
-            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
-            button1.BackgroundImageLayout = ImageLayout.Center;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.Location = new Point(50, 4);
-            button1.Name = "button1";
-            button1.Size = new Size(48, 48);
-            button1.TabIndex = 1;
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click_1;
-            // 
-            // button2
-            // 
-            button2.BackColor = SystemColors.ButtonFace;
-            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
-            button2.BackgroundImageLayout = ImageLayout.Center;
-            button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.Location = new Point(100, 4);
-            button2.Name = "button2";
-            button2.Size = new Size(48, 48);
-            button2.TabIndex = 2;
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            notifyIcon1.Text = "BoBar";
+            notifyIcon1.Visible = true;
+            notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
             // 
             // contextMenuStrip1
             // 
@@ -135,28 +102,101 @@
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
+            // button0
+            // 
+            button0.BackColor = Color.FromArgb(45, 45, 45);
+            button0.BackgroundImage = (Image)resources.GetObject("button0.BackgroundImage");
+            button0.BackgroundImageLayout = ImageLayout.Zoom;
+            button0.Cursor = Cursors.Hand;
+            button0.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+            button0.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+            button0.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+            button0.FlatStyle = FlatStyle.Flat;
+            button0.Location = new Point(10, 10);
+            button0.Margin = new Padding(10, 10, 0, 0);
+            button0.Name = "button0";
+            button0.Size = new Size(40, 40);
+            button0.TabIndex = 0;
+            button0.UseVisualStyleBackColor = false;
+            button0.Click += button0_Click;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.FromArgb(45, 45, 45);
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+            button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Location = new Point(60, 10);
+            button1.Margin = new Padding(10, 10, 0, 0);
+            button1.Name = "button1";
+            button1.Size = new Size(40, 40);
+            button1.TabIndex = 1;
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.FromArgb(45, 45, 45);
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Cursor = Cursors.Hand;
+            button2.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Location = new Point(110, 10);
+            button2.Margin = new Padding(10, 10, 0, 0);
+            button2.Name = "button2";
+            button2.Size = new Size(40, 40);
+            button2.TabIndex = 2;
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.AutoSize = true;
+            flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel1.Controls.Add(button0);
+            flowLayoutPanel1.Controls.Add(button1);
+            flowLayoutPanel1.Controls.Add(button2);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.Location = new Point(0, 0);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(160, 54);
+            flowLayoutPanel1.TabIndex = 3;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
-            BackColor = SystemColors.WindowText;
-            ClientSize = new Size(292, 54);
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackColor = SystemColors.MenuText;
+            ClientSize = new Size(160, 54);
             ContextMenuStrip = contextMenuStrip1;
             ControlBox = false;
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(button_discord);
+            Controls.Add(flowLayoutPanel1);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
-            Text = "Form1";
+            ShowInTaskbar = false;
+            Text = "BobsBar";
             MouseDown += FormDrag_MouseDown;
             contextMenuStrip1.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Button button_discord;
+        private Button button0;
         private Button button1;
         private Button button2;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private NotifyIcon notifyIcon1;
     }
 }
