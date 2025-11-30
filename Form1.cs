@@ -304,8 +304,8 @@ namespace WinFormsApp1
                 }
                 else
                 {
-                    button.BackColor = Color.FromArgb(0, 0, 0, 0);
-                    button.FlatAppearance.BorderColor = SystemColors.MenuBar;
+                    button.BackColor = SystemColors.MenuBar;
+                    button.FlatAppearance.BorderColor = SystemColors.ScrollBar;
                     button.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
                     button.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
                 }
