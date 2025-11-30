@@ -10,9 +10,9 @@ namespace WinFormsApp1
         private const int SeparatorTopMargin = 17;
         private static readonly Color SeparatorColor = Color.FromArgb(80, 80, 80);
         
-        private readonly string _iniPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BobsBar", "settings.ini");
+        private readonly ConfigurationManager _configManager = new();
+        private AppConfiguration _config = new();
         private bool _loadingPosition;
-        private bool _isDarkMode = true;
 
         public Form1()
         {
@@ -147,92 +147,25 @@ namespace WinFormsApp1
 
         private void TryLoadWindowLocation()
         {
-            try
+            _config = _configManager.LoadConfiguration();
+
+            if (_config.WindowLocation.HasValue)
             {
-                if (!File.Exists(_iniPath)) return;
-
-                int? x = null;
-                int? y = null;
-                bool? alwaysOnTop = null;
-                bool? darkMode = null;
-
-                foreach (var line in File.ReadAllLines(_iniPath))
-                {
-                    var trimmed = line.Trim();
-                    if (trimmed.StartsWith("X=", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (int.TryParse(trimmed[2..], out var xValue))
-                            x = xValue;
-                    }
-                    else if (trimmed.StartsWith("Y=", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (int.TryParse(trimmed[2..], out var yValue))
-                            y = yValue;
-                    }
-                    else if (trimmed.StartsWith("AlwaysOnTop=", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (bool.TryParse(trimmed[12..], out var topValue))
-                            alwaysOnTop = topValue;
-                    }
-                    else if (trimmed.StartsWith("DarkMode=", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (bool.TryParse(trimmed[9..], out var darkModeValue))
-                            darkMode = darkModeValue;
-                    }
-                }
-
-                if (x.HasValue && y.HasValue)
-                {
-                    var pt = new Point(x.Value, y.Value);
-                    if (Screen.AllScreens.Any(scr => scr.WorkingArea.Contains(pt)))
-                    {
-                        StartPosition = FormStartPosition.Manual;
-                        Location = pt;
-                    }
-                }
-
-                if (alwaysOnTop.HasValue)
-                {
-                    TopMost = alwaysOnTop.Value;
-                    alwaysOnTopToolStripMenuItem.Checked = alwaysOnTop.Value;
-                }
-
-                if (darkMode.HasValue)
-                {
-                    _isDarkMode = darkMode.Value;
-                    darkModeToolStripMenuItem.Checked = darkMode.Value;
-                    ApplyTheme();
-                }
+                StartPosition = FormStartPosition.Manual;
+                Location = _config.WindowLocation.Value;
             }
-            catch
-            {
-                // Swallow exceptions to avoid startup failure
-            }
+
+            TopMost = _config.AlwaysOnTop;
+            alwaysOnTopToolStripMenuItem.Checked = _config.AlwaysOnTop;
+
+            darkModeToolStripMenuItem.Checked = _config.DarkMode;
+            ApplyTheme();
         }
 
         private void TrySaveWindowLocation()
         {
-            try
-            {
-                var dir = Path.GetDirectoryName(_iniPath);
-                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                File.WriteAllLines(_iniPath, new[]
-                {
-                    "[Window]",
-                    $"X={Left}",
-                    $"Y={Top}",
-                    $"AlwaysOnTop={TopMost}",
-                    $"DarkMode={_isDarkMode}"
-                });
-            }
-            catch
-            {
-                // Swallow exceptions to avoid close failure
-            }
+            _config.AlwaysOnTop = TopMost;
+            _configManager.SaveConfiguration(_config, Location);
         }
 
         private void button0_Click(object sender, EventArgs e)
@@ -273,10 +206,10 @@ namespace WinFormsApp1
 
         private void alwaysOnTopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Toggle TopMost based on menu check state
             if (sender is ToolStripMenuItem item)
             {
                 TopMost = item.Checked;
+                _config.AlwaysOnTop = item.Checked;
             }
         }
 
@@ -284,7 +217,7 @@ namespace WinFormsApp1
         {
             if (sender is ToolStripMenuItem item)
             {
-                _isDarkMode = item.Checked;
+                _config.DarkMode = item.Checked;
                 ApplyTheme();
             }
         }
@@ -295,7 +228,7 @@ namespace WinFormsApp1
 
             foreach (var button in buttons)
             {
-                if (_isDarkMode)
+                if (_config.DarkMode)
                 {
                     button.BackColor = Color.FromArgb(45, 45, 45);
                     button.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
