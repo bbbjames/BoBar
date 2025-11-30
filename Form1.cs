@@ -29,7 +29,7 @@ namespace WinFormsApp1
 
             var buttons = flowLayoutPanel1.Controls
                 .OfType<Button>()
-                .Cast<Control>()
+                .OrderBy(b => b.TabIndex)
                 .ToList();
 
             if (buttons.Count == 0) return;
@@ -48,12 +48,10 @@ namespace WinFormsApp1
                     sep.Dispose();
                 }
 
-                int separatorHeight = buttons.Count > 0 ? buttons[0].Height : 26;
-
                 for (int i = 0; i < buttons.Count - 1; i++)
                 {
                     int insertIndex = flowLayoutPanel1.Controls.IndexOf(buttons[i]) + 1;
-                    var separator = CreateSeparator(separatorHeight);
+                    var separator = CreateSeparator(buttons[i]);
                     flowLayoutPanel1.Controls.Add(separator);
                     flowLayoutPanel1.Controls.SetChildIndex(separator, insertIndex);
                 }
@@ -64,14 +62,21 @@ namespace WinFormsApp1
             }
         }
 
-        private Panel CreateSeparator(int height)
+        private Panel CreateSeparator(Button referenceButton)
         {
+            int buttonHeight = referenceButton.Height;
+            int buttonTopMargin = referenceButton.Margin.Top;
+            int buttonLeftMargin = referenceButton.Margin.Left;
+            
+            int separatorHeight = (int)(buttonHeight * 0.65);
+            int topMargin = buttonTopMargin + (buttonHeight - separatorHeight) / 2;
+
             return new Panel
             {
                 Width = SeparatorWidth,
-                Height = height,
+                Height = separatorHeight,
                 BackColor = SeparatorColor,
-                Margin = new Padding(0, SeparatorTopMargin, 0, 0),
+                Margin = new Padding(buttonLeftMargin, topMargin, 0, 0),
                 Tag = "Separator",
                 AccessibleName = "Separator",
                 TabStop = false
