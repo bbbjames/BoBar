@@ -112,8 +112,8 @@
             button0.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
             button0.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
             button0.FlatStyle = FlatStyle.Flat;
-            button0.Location = new Point(10, 10);
-            button0.Margin = new Padding(10, 10, 0, 0);
+            button0.Location = new Point(10, 3);
+            button0.Margin = new Padding(10, 3, 0, 0);
             button0.Name = "button0";
             button0.Size = new Size(40, 40);
             button0.TabIndex = 0;
@@ -130,8 +130,8 @@
             button1.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
             button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(60, 10);
-            button1.Margin = new Padding(10, 10, 0, 0);
+            button1.Location = new Point(60, 3);
+            button1.Margin = new Padding(10, 3, 0, 0);
             button1.Name = "button1";
             button1.Size = new Size(40, 40);
             button1.TabIndex = 1;
@@ -140,16 +140,17 @@
             // 
             // button2
             // 
-            button2.BackColor = Color.FromArgb(45, 45, 45);
+            button2.BackColor = Color.FromArgb(0, 0, 0, 0);
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Cursor = Cursors.Hand;
-            button2.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
-            button2.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
-            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+            button2.FlatAppearance.BorderColor = SystemColors.MenuBar;
+            button2.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
+            button2.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(110, 10);
-            button2.Margin = new Padding(10, 10, 0, 0);
+            button2.ForeColor = SystemColors.ControlText;
+            button2.Location = new Point(110, 3);
+            button2.Margin = new Padding(10, 3, 0, 0);
             button2.Name = "button2";
             button2.Size = new Size(40, 40);
             button2.TabIndex = 2;
