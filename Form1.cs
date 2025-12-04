@@ -7,7 +7,7 @@ namespace BoBar
     {
         private const int SnapDistance = 10;
         private const int SeparatorWidth = 1;
-        private const int SeparatorTopMargin = 17;
+        private const int SeparatorTopMargin = 11;
         private static readonly Color SeparatorColor = Color.FromArgb(80, 80, 80);
         
         private readonly ConfigurationManager _configManager = new();
@@ -309,7 +309,7 @@ namespace BoBar
                     FlatStyle = FlatStyle.Flat,
                     Tag = "Dynamic",
                     BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
-                    Margin = new Padding(3, 17, 0, 0)
+                    Margin = new Padding(3, 11, 0, 0)
                 };
 
                 button.FlatAppearance.BorderSize = 1;
