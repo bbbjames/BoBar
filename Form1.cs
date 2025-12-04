@@ -189,7 +189,8 @@ namespace BoBar
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "BoBar Launcher v1.0", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using var aboutForm = new AboutForm();
+            aboutForm.ShowDialog(this);
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
