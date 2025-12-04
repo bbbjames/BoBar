@@ -45,10 +45,14 @@ dotnet build
 dotnet run
 ```
 
-### Release Build
+### Release Build Self-Contained vs Framework-Dependent
 
 ```bash
 dotnet publish -c Release -r win-x64 --self-contained
+```
+
+```bash
+dotnet publish -c Release -r win-x64 --no-self-contained
 ```
 
 The compiled executable will be in `bin\Release\net10.0-windows\win-x64\publish\`
