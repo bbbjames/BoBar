@@ -107,7 +107,7 @@ namespace BoBar
                 // Fallback to the executable's associated icon
                 if (icon is null)
                 {
-                    icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                    icon = IconExtractor.ExtractHighQualityIcon(Application.ExecutablePath);
                 }
 
                 // Final fallback to a default application icon
@@ -327,10 +327,10 @@ namespace BoBar
                 }
 
                 // Set button icon
-                var icon = item.GetIcon();
-                if (icon != null)
+                var iconBitmap = item.GetIconBitmap();
+                if (iconBitmap != null)
                 {
-                    button.BackgroundImage = icon.ToBitmap();
+                    button.BackgroundImage = iconBitmap;
                     button.BackgroundImageLayout = ImageLayout.Zoom;
                 }
 
@@ -352,29 +352,31 @@ namespace BoBar
         private void SetupDragDrop()
         {
             AllowDrop = true;
-            
-            DragEnter += (s, e) =>
-            {
-                if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
-                {
-                    var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-                    e.Effect = files.Any(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase))
-                        ? DragDropEffects.Copy
-                        : DragDropEffects.None;
-                }
-            };
+            DragEnter += Form1_DragEnter;
+            DragDrop += Form1_DragDrop;
+        }
 
-            DragDrop += (s, e) =>
+        private void Form1_DragEnter(object? sender, DragEventArgs e)
+        {
+            if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
             {
-                if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+                e.Effect = files.Any(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase))
+                    ? DragDropEffects.Copy
+                    : DragDropEffects.None;
+            }
+        }
+
+        private void Form1_DragDrop(object? sender, DragEventArgs e)
+        {
+            if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+                foreach (var file in files.Where(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-                    foreach (var file in files.Where(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        AddLaunchItemFromDrop(file);
-                    }
+                    AddLaunchItemFromDrop(file);
                 }
-            };
+            }
         }
 
         private void AddLaunchItemFromDrop(string executablePath)

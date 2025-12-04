@@ -34,6 +34,12 @@ Generated Files/
 # Build-related
 *.xcassets
 
+# Auto-generated .resx files for programmatically-created forms
+# (Keep Form1.resx as it has real designer resources)
+EditLaunchItemForm.resx
+SettingsForm.resx
+*_Updated.resx
+
 # NuGet
 *.nupkg
 # The packages folder can be ignored because of Package Restore

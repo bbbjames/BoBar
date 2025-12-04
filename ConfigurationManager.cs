@@ -14,15 +14,85 @@ namespace BoBar
     {
         private readonly string _configPath;
         private readonly string _launchItemsPath;
+        private readonly string _appDataPath;
 
         public ConfigurationManager()
         {
-            var appDataPath = Path.Combine(
+            _appDataPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "BoBar");
-            
-            _configPath = Path.Combine(appDataPath, "settings.ini");
-            _launchItemsPath = Path.Combine(appDataPath, "launchitems.json");
+
+            _configPath = Path.Combine(_appDataPath, "settings.ini");
+            _launchItemsPath = Path.Combine(_appDataPath, "launchitems.json");
+
+            // Initialize default configuration files if they don't exist
+            InitializeDefaultFiles();
+        }
+
+        private void InitializeDefaultFiles()
+        {
+            try
+            {
+                // Ensure the AppData directory exists
+                if (!Directory.Exists(_appDataPath))
+                {
+                    Directory.CreateDirectory(_appDataPath);
+                }
+
+                // Get the application's directory
+                var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+                // Copy default settings.ini if it doesn't exist
+                if (!File.Exists(_configPath))
+                {
+                    var defaultSettingsPath = Path.Combine(appDirectory, "default_settings.ini");
+                    if (File.Exists(defaultSettingsPath))
+                    {
+                        File.Copy(defaultSettingsPath, _configPath);
+                    }
+                }
+
+                // Copy default launchitems.json if it doesn't exist
+                if (!File.Exists(_launchItemsPath))
+                {
+                    var defaultLaunchItemsPath = Path.Combine(appDirectory, "default_launchitems.json");
+                    if (File.Exists(defaultLaunchItemsPath))
+                    {
+                        File.Copy(defaultLaunchItemsPath, _launchItemsPath);
+                    }
+                }
+
+                // Copy default icons if they don't exist
+                var iconsPath = Path.Combine(_appDataPath, "Icons");
+                var defaultIconsPath = Path.Combine(appDirectory, "DefaultIcons");
+
+                if (Directory.Exists(defaultIconsPath))
+                {
+                    // Ensure Icons directory exists
+                    if (!Directory.Exists(iconsPath))
+                    {
+                        Directory.CreateDirectory(iconsPath);
+                    }
+
+                    // Copy all icon files from DefaultIcons to Icons folder
+                    foreach (var iconFile in Directory.GetFiles(defaultIconsPath, "*.*"))
+                    {
+                        var fileName = Path.GetFileName(iconFile);
+                        var destPath = Path.Combine(iconsPath, fileName);
+
+                        // Only copy if the icon doesn't already exist
+                        if (!File.Exists(destPath))
+                        {
+                            File.Copy(iconFile, destPath);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silently handle initialization failures
+                // The app will fall back to hardcoded defaults if needed
+            }
         }
 
         public AppConfiguration LoadConfiguration()

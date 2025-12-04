@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "Notepad",
+    "ExecutablePath": "C:\\Windows\\notepad.exe",
+    "Arguments": "",
+    "IconPath": "C:\\Users\\Admin\\AppData\\Roaming\\BoBar\\Icons\\notepad.png",
+    "Order": 0
+  },
+  {
+    "Name": "Calc",
+    "ExecutablePath": "C:\\Windows\\system32\\calc.exe",
+    "Arguments": "",
+    "IconPath": "C:\\Users\\Admin\\AppData\\Roaming\\BoBar\\Icons\\calc.png",
+    "Order": 1
+  }
+]
