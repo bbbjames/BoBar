@@ -298,7 +298,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-Developed by bbbjames
+Developed by bbbjames 
+https://bobjames.dev
+https://bobjames.dev/twitter
 
 ## Support
 
