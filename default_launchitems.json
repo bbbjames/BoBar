@@ -1,14 +1,14 @@
 [
   {
     "Name": "Notepad",
-    "ExecutablePath": "C:\\Windows\\notepad.exe",
+    "ExecutablePath": "%WINDIR%\\notepad.exe",
     "Arguments": "",
     "IconPath": "%AppData%\\BoBar\\Icons\\notepad.png",
     "Order": 0
   },
   {
     "Name": "Calc",
-    "ExecutablePath": "C:\\Windows\\system32\\calc.exe",
+    "ExecutablePath": "%WINDIR%\\system32\\calc.exe",
     "Arguments": "",
     "IconPath": "%AppData%\\BoBar\\Icons\\calc.png",
     "Order": 1
