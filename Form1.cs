@@ -392,15 +392,61 @@ namespace BoBar
                 _configManager.SaveLaunchItems(_launchItems);
                 RefreshButtons();
 
-                // Show confirmation
-                MessageBox.Show(this, $"Added {newItem.Name} to launcher", "Item Added", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                AnimateNewButton();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, $"Failed to add {Path.GetFileName(executablePath)}: {ex.Message}", 
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void AnimateNewButton()
+        {
+            var dynamicButtons = flowLayoutPanel1.Controls.OfType<Button>()
+                .Where(b => b.Tag?.ToString() == "Dynamic")
+                .ToList();
+
+            if (dynamicButtons.Count == 0) return;
+
+            var newButton = dynamicButtons[^1];
+            var originalColor = newButton.BackColor;
+            var glowColor = _config.DarkMode 
+                ? Color.FromArgb(100, 150, 255) 
+                : Color.FromArgb(135, 206, 250);
+
+            var timer = new System.Windows.Forms.Timer { Interval = 50 };
+            int step = 0;
+            const int totalSteps = 20;
+
+            timer.Tick += (s, e) =>
+            {
+                step++;
+                if (step <= totalSteps)
+                {
+                    double progress = step / (double)totalSteps;
+                    double pulseIntensity = Math.Sin(progress * Math.PI * 2) * 0.5 + 0.5;
+
+                    newButton.BackColor = BlendColors(originalColor, glowColor, pulseIntensity * 0.6);
+                }
+                else
+                {
+                    newButton.BackColor = originalColor;
+                    timer.Stop();
+                    timer.Dispose();
+                }
+            };
+
+            timer.Start();
+        }
+
+        private Color BlendColors(Color color1, Color color2, double ratio)
+        {
+            ratio = Math.Clamp(ratio, 0, 1);
+            int r = (int)(color1.R + (color2.R - color1.R) * ratio);
+            int g = (int)(color1.G + (color2.G - color1.G) * ratio);
+            int b = (int)(color1.B + (color2.B - color1.B) * ratio);
+            return Color.FromArgb(r, g, b);
         }
 
         private static class NativeMethods
