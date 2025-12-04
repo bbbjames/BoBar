@@ -246,4 +246,4 @@ BenchmarkDotNet.Artifacts/
 !**/*.resx
 !**/*.config
 !**/*.json
-/.claude/settings.local.json
+/.claude
