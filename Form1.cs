@@ -174,8 +174,11 @@ namespace BoBar
 
         private void moveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NativeMethods.ReleaseCapture();
-            NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0);
+            MessageBox.Show(this, 
+                "Hold Ctrl and drag any button to move the toolbar.\n\nThe toolbar will snap to screen edges automatically.", 
+                "Move Toolbar", 
+                MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -241,6 +244,16 @@ namespace BoBar
             {
                 NativeMethods.ReleaseCapture();
                 NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0); // WM_NCLBUTTONDOWN + HTCAPTION
+            }
+        }
+
+        private void Button_MouseDown(object? sender, MouseEventArgs e)
+        {
+            // Allow moving the form when Ctrl is held and left mouse button is clicked
+            if (e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control))
+            {
+                NativeMethods.ReleaseCapture();
+                NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0);
             }
         }
 
@@ -334,7 +347,8 @@ namespace BoBar
                     button.BackgroundImageLayout = ImageLayout.Zoom;
                 }
 
-                // Set click handler
+                // Set click handler with Ctrl+Drag detection
+                button.MouseDown += Button_MouseDown;
                 button.Click += (s, e) => item.Launch();
 
                 flowLayoutPanel1.Controls.Add(button);
