@@ -47,9 +47,10 @@ namespace BoBar
         {
             try
             {
-                if (!string.IsNullOrEmpty(IconPath) && File.Exists(IconPath))
+                var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
+                if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
                 {
-                    return IconExtractor.LoadIconFromFile(IconPath);
+                    return IconExtractor.LoadIconFromFile(expandedIconPath);
                 }
 
                 if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(ExecutablePath))
@@ -70,17 +71,18 @@ namespace BoBar
             try
             {
                 // If we have a cached icon file, load it directly
-                if (!string.IsNullOrEmpty(IconPath) && File.Exists(IconPath))
+                var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
+                if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
                 {
                     // For PNG files, load directly as bitmap for best quality
-                    if (Path.GetExtension(IconPath).Equals(".png", StringComparison.OrdinalIgnoreCase))
+                    if (Path.GetExtension(expandedIconPath).Equals(".png", StringComparison.OrdinalIgnoreCase))
                     {
-                        return new Bitmap(IconPath);
+                        return new Bitmap(expandedIconPath);
                     }
                     // For ICO files, load as icon then convert
-                    else if (Path.GetExtension(IconPath).Equals(".ico", StringComparison.OrdinalIgnoreCase))
+                    else if (Path.GetExtension(expandedIconPath).Equals(".ico", StringComparison.OrdinalIgnoreCase))
                     {
-                        using var icon = new Icon(IconPath);
+                        using var icon = new Icon(expandedIconPath);
                         return icon.ToBitmap();
                     }
                 }

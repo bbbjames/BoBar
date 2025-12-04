@@ -35,7 +35,7 @@ A lightweight, customizable Windows application launcher with a floating taskbar
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/BoBar.git
+git clone https://github.com/bbbjames/BoBar.git
 cd BoBar
 
 # Build the project
