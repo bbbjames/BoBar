@@ -294,11 +294,11 @@ Contributions are welcome! Please follow these guidelines:
 
 ## License
 
-[Specify your license here - e.g., MIT, GPL, etc.]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
-Developed by [Your Name/Team]
+Developed by bbbjames
 
 ## Support
 
