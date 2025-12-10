@@ -1,145 +1,143 @@
 using System.Drawing;
 
-namespace BoBar
+namespace BoBar;
+public class LaunchItem
 {
-    public class LaunchItem
+    public string Name { get; set; } = string.Empty;
+    public string ExecutablePath { get; set; } = string.Empty;
+    public string Arguments { get; set; } = string.Empty;
+    public string WorkingDirectory { get; set; } = string.Empty;
+    public string IconPath { get; set; } = string.Empty;
+    public int Order { get; set; }
+
+    public LaunchItem() { }
+
+    public LaunchItem(string executablePath)
     {
-        public string Name { get; set; } = string.Empty;
-        public string ExecutablePath { get; set; } = string.Empty;
-        public string Arguments { get; set; } = string.Empty;
-        public string WorkingDirectory { get; set; } = string.Empty;
-        public string IconPath { get; set; } = string.Empty;
-        public int Order { get; set; }
+        ExecutablePath = executablePath;
+        Name = Path.GetFileNameWithoutExtension(executablePath);
 
-        public LaunchItem() { }
-
-        public LaunchItem(string executablePath)
+        // Set working directory to the executable's directory
+        try
         {
-            ExecutablePath = executablePath;
-            Name = Path.GetFileNameWithoutExtension(executablePath);
+            WorkingDirectory = Path.GetDirectoryName(executablePath) ?? string.Empty;
+        }
+        catch
+        {
+            WorkingDirectory = string.Empty;
+        }
 
-            // Set working directory to the executable's directory
-            try
+        // Try to extract high-quality icon from executable
+        try
+        {
+            var icon = IconExtractor.ExtractHighQualityIcon(executablePath);
+            if (icon != null)
             {
-                WorkingDirectory = Path.GetDirectoryName(executablePath) ?? string.Empty;
+                // Save icon to app data directory for persistence
+                var iconDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "BoBar", "Icons");
+                Directory.CreateDirectory(iconDir);
+
+                // Use PNG extension to preserve high quality (32-bit ARGB)
+                var iconFileName = $"{Path.GetFileNameWithoutExtension(executablePath)}.png";
+                IconPath = Path.Combine(iconDir, iconFileName);
+
+                IconExtractor.SaveIconToFile(icon, IconPath);
             }
-            catch
+        }
+        catch
+        {
+            // If icon extraction fails, leave IconPath empty
+            IconPath = string.Empty;
+        }
+    }
+
+    public Icon? GetIcon()
+    {
+        try
+        {
+            var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
+            if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
             {
-                WorkingDirectory = string.Empty;
+                return IconExtractor.LoadIconFromFile(expandedIconPath);
             }
 
-            // Try to extract high-quality icon from executable
-            try
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(ExecutablePath))
             {
-                var icon = IconExtractor.ExtractHighQualityIcon(executablePath);
+                return IconExtractor.ExtractHighQualityIcon(ExecutablePath);
+            }
+        }
+        catch
+        {
+            // Return null if icon loading fails
+        }
+
+        return null;
+    }
+
+    public Bitmap? GetIconBitmap()
+    {
+        try
+        {
+            // If we have a cached icon file, load it directly
+            var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
+            if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
+            {
+                // For PNG files, load directly as bitmap for best quality
+                if (Path.GetExtension(expandedIconPath).Equals(".png", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new Bitmap(expandedIconPath);
+                }
+                // For ICO files, load as icon then convert
+                else if (Path.GetExtension(expandedIconPath).Equals(".ico", StringComparison.OrdinalIgnoreCase))
+                {
+                    using var icon = new Icon(expandedIconPath);
+                    return icon.ToBitmap();
+                }
+            }
+
+            // Extract from executable if no cached icon
+            if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(ExecutablePath))
+            {
+                var icon = IconExtractor.ExtractHighQualityIcon(ExecutablePath);
                 if (icon != null)
                 {
-                    // Save icon to app data directory for persistence
-                    var iconDir = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "BoBar", "Icons");
-                    Directory.CreateDirectory(iconDir);
-
-                    // Use PNG extension to preserve high quality (32-bit ARGB)
-                    var iconFileName = $"{Path.GetFileNameWithoutExtension(executablePath)}.png";
-                    IconPath = Path.Combine(iconDir, iconFileName);
-
-                    IconExtractor.SaveIconToFile(icon, IconPath);
+                    return icon.ToBitmap();
                 }
-            }
-            catch
-            {
-                // If icon extraction fails, leave IconPath empty
-                IconPath = string.Empty;
             }
         }
-
-        public Icon? GetIcon()
+        catch
         {
-            try
-            {
-                var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
-                if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
-                {
-                    return IconExtractor.LoadIconFromFile(expandedIconPath);
-                }
-
-                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(ExecutablePath))
-                {
-                    return IconExtractor.ExtractHighQualityIcon(ExecutablePath);
-                }
-            }
-            catch
-            {
-                // Return null if icon loading fails
-            }
-
-            return null;
+            // Return null if icon loading fails
         }
 
-        public Bitmap? GetIconBitmap()
+        return null;
+    }
+
+    public void Launch()
+    {
+        try
         {
-            try
+            var startInfo = new System.Diagnostics.ProcessStartInfo
             {
-                // If we have a cached icon file, load it directly
-                var expandedIconPath = Environment.ExpandEnvironmentVariables(IconPath);
-                if (!string.IsNullOrEmpty(expandedIconPath) && File.Exists(expandedIconPath))
-                {
-                    // For PNG files, load directly as bitmap for best quality
-                    if (Path.GetExtension(expandedIconPath).Equals(".png", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return new Bitmap(expandedIconPath);
-                    }
-                    // For ICO files, load as icon then convert
-                    else if (Path.GetExtension(expandedIconPath).Equals(".ico", StringComparison.OrdinalIgnoreCase))
-                    {
-                        using var icon = new Icon(expandedIconPath);
-                        return icon.ToBitmap();
-                    }
-                }
+                FileName = ExecutablePath,
+                Arguments = Arguments,
+                UseShellExecute = true
+            };
 
-                // Extract from executable if no cached icon
-                if (!string.IsNullOrEmpty(ExecutablePath) && File.Exists(ExecutablePath))
-                {
-                    var icon = IconExtractor.ExtractHighQualityIcon(ExecutablePath);
-                    if (icon != null)
-                    {
-                        return icon.ToBitmap();
-                    }
-                }
-            }
-            catch
+            // Set working directory if specified
+            if (!string.IsNullOrWhiteSpace(WorkingDirectory) && Directory.Exists(WorkingDirectory))
             {
-                // Return null if icon loading fails
+                startInfo.WorkingDirectory = WorkingDirectory;
             }
-
-            return null;
+            
+            System.Diagnostics.Process.Start(startInfo);
         }
-
-        public void Launch()
+        catch (Exception ex)
         {
-            try
-            {
-                var startInfo = new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = ExecutablePath,
-                    Arguments = Arguments,
-                    UseShellExecute = true
-                };
-
-                // Set working directory if specified
-                if (!string.IsNullOrWhiteSpace(WorkingDirectory) && Directory.Exists(WorkingDirectory))
-                {
-                    startInfo.WorkingDirectory = WorkingDirectory;
-                }
-                
-                System.Diagnostics.Process.Start(startInfo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to launch {Name}: {ex.Message}", "Launch Error", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            MessageBox.Show($"Failed to launch {Name}: {ex.Message}", "Launch Error", 
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
