@@ -1,4 +1,4 @@
-﻿namespace BoBar
+namespace BoBar
 {
     partial class Form1
     {

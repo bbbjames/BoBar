@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# C# source files should always use CRLF on Windows
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.sln text eol=crlf
+
+# JSON, XML, and config files
+*.json text eol=crlf
+*.xml text eol=crlf
+*.ini text eol=crlf
+*.md text eol=crlf
+
+# Scripts
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.ico binary
+*.png binary
+*.jpg binary
+*.dll binary
+*.exe binary
