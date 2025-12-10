@@ -18,7 +18,7 @@ public static class IconExtractor
     private static extern IntPtr ImageList_GetIcon(IntPtr himl, int i, int flags);
 
     [DllImport("shell32.dll", EntryPoint = "#727")]
-    private static extern int SHGetImageList(int iImageList, ref Guid riid, ref IImageList ppv);
+    private static extern int SHGetImageList(int iImageList, ref Guid riid, out IImageList ppv);
 
     [DllImport("shell32.dll", EntryPoint = "#727")]
     private static extern int SHGetImageListHandle(int iImageList, ref Guid riid, out IntPtr handle);
@@ -177,7 +177,7 @@ public static class IconExtractor
             Guid iidImageList = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
             IImageList? iml = null;
 
-            int hr = SHGetImageList(SHIL_JUMBO, ref iidImageList, ref iml!);
+            int hr = SHGetImageList(SHIL_JUMBO, ref iidImageList, out iml!);
 
             if (hr == 0 && iml != null)
             {
@@ -219,7 +219,7 @@ public static class IconExtractor
             Guid iidImageList = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
             IImageList? iml = null;
 
-            int hr = SHGetImageList(SHIL_EXTRALARGE, ref iidImageList, ref iml!);
+            int hr = SHGetImageList(SHIL_EXTRALARGE, ref iidImageList, out iml!);
 
             if (hr == 0 && iml != null)
             {

@@ -133,7 +133,7 @@ public partial class SettingsForm : Form
         dropInstruction.Name = "dropInstruction";
         dropInstruction.Size = new Size(242, 123);
         dropInstruction.TabIndex = 0;
-        dropInstruction.Text = "Drag .exe files here\r\n\r\nto add to launcher";
+        dropInstruction.Text = "Drag .exe or .lnk files here\r\n\r\nto add to launcher";
         dropInstruction.TextAlign = ContentAlignment.MiddleCenter;
         //
         // separator1
@@ -278,7 +278,9 @@ public partial class SettingsForm : Form
         if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            e.Effect = files.Any(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            e.Effect = files.Any(f => 
+                Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase) ||
+                Path.GetExtension(f).Equals(".lnk", StringComparison.OrdinalIgnoreCase))
                 ? DragDropEffects.Copy
                 : DragDropEffects.None;
         }
@@ -289,24 +291,79 @@ public partial class SettingsForm : Form
         if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            foreach (var file in files.Where(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
+            foreach (var file in files.Where(f => 
+                Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase) ||
+                Path.GetExtension(f).Equals(".lnk", StringComparison.OrdinalIgnoreCase)))
             {
                 AddLaunchItem(file);
             }
         }
     }
 
-    private void AddLaunchItem(string executablePath)
+    private void AddLaunchItem(string filePath)
     {
-        var item = new LaunchItem(executablePath)
+        try
         {
-            Order = _launchItems.Count
-        };
+            LaunchItem item;
+            
+            // Check if it's a shortcut file
+            if (Path.GetExtension(filePath).Equals(".lnk", StringComparison.OrdinalIgnoreCase))
+            {
+                var shortcutInfo = ShortcutResolver.ResolveShortcut(filePath);
+                if (shortcutInfo == null || string.IsNullOrEmpty(shortcutInfo.TargetPath))
+                {
+                    MessageBox.Show(this,
+                        $"Failed to resolve shortcut: {Path.GetFileName(filePath)}",
+                        "Invalid Shortcut",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
 
-        _launchItems.Add(item);
-        _hasUnsavedChanges = true;
-        RefreshItemsList();
-        _itemsList.SelectedIndex = _launchItems.Count - 1;
+                // Verify the target exe exists
+                if (!File.Exists(shortcutInfo.TargetPath))
+                {
+                    MessageBox.Show(this,
+                        $"Shortcut target not found: {shortcutInfo.TargetPath}",
+                        "Target Not Found",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Create LaunchItem from shortcut info
+                item = new LaunchItem(shortcutInfo.TargetPath)
+                {
+                    Name = shortcutInfo.ShortcutName, // Use shortcut name
+                    Arguments = shortcutInfo.Arguments,
+                    WorkingDirectory = string.IsNullOrEmpty(shortcutInfo.WorkingDirectory) 
+                        ? Path.GetDirectoryName(shortcutInfo.TargetPath) ?? string.Empty
+                        : shortcutInfo.WorkingDirectory,
+                    Order = _launchItems.Count
+                };
+            }
+            else
+            {
+                // Direct .exe file
+                item = new LaunchItem(filePath)
+                {
+                    Order = _launchItems.Count
+                };
+            }
+
+            _launchItems.Add(item);
+            _hasUnsavedChanges = true;
+            RefreshItemsList();
+            _itemsList.SelectedIndex = _launchItems.Count - 1;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this,
+                $"Failed to add {Path.GetFileName(filePath)}: {ex.Message}",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
     }
 
     private void RefreshItemsList()

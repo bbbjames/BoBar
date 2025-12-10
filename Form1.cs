@@ -375,7 +375,9 @@ public partial class Form1 : Form
         if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            e.Effect = files.Any(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            e.Effect = files.Any(f =>
+                Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase) ||
+                Path.GetExtension(f).Equals(".lnk", StringComparison.OrdinalIgnoreCase))
                 ? DragDropEffects.Copy
                 : DragDropEffects.None;
         }
@@ -386,21 +388,65 @@ public partial class Form1 : Form
         if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            foreach (var file in files.Where(f => Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase)))
+            foreach (var file in files.Where(f =>
+                Path.GetExtension(f).Equals(".exe", StringComparison.OrdinalIgnoreCase) ||
+                Path.GetExtension(f).Equals(".lnk", StringComparison.OrdinalIgnoreCase)))
             {
                 AddLaunchItemFromDrop(file);
             }
         }
     }
 
-    private void AddLaunchItemFromDrop(string executablePath)
+    private void AddLaunchItemFromDrop(string filePath)
     {
         try
         {
-            var newItem = new LaunchItem(executablePath)
+            LaunchItem newItem;
+
+            // Check if it's a shortcut file
+            if (Path.GetExtension(filePath).Equals(".lnk", StringComparison.OrdinalIgnoreCase))
             {
-                Order = _launchItems.Count
-            };
+                var shortcutInfo = ShortcutResolver.ResolveShortcut(filePath);
+                if (shortcutInfo == null || string.IsNullOrEmpty(shortcutInfo.TargetPath))
+                {
+                    MessageBox.Show(this,
+                        $"Failed to resolve shortcut: {Path.GetFileName(filePath)}",
+                        "Invalid Shortcut",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Verify the target exe exists
+                if (!File.Exists(shortcutInfo.TargetPath))
+                {
+                    MessageBox.Show(this,
+                        $"Shortcut target not found: {shortcutInfo.TargetPath}",
+                        "Target Not Found",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Create LaunchItem from shortcut info
+                newItem = new LaunchItem(shortcutInfo.TargetPath)
+                {
+                    Name = shortcutInfo.ShortcutName,
+                    Arguments = shortcutInfo.Arguments,
+                    WorkingDirectory = string.IsNullOrEmpty(shortcutInfo.WorkingDirectory)
+                        ? Path.GetDirectoryName(shortcutInfo.TargetPath) ?? string.Empty
+                        : shortcutInfo.WorkingDirectory,
+                    Order = _launchItems.Count
+                };
+            }
+            else
+            {
+                // Direct .exe file
+                newItem = new LaunchItem(filePath)
+                {
+                    Order = _launchItems.Count
+                };
+            }
 
             _launchItems.Add(newItem);
             _configManager.SaveLaunchItems(_launchItems);
@@ -410,7 +456,7 @@ public partial class Form1 : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, $"Failed to add {Path.GetFileName(executablePath)}: {ex.Message}", 
+            MessageBox.Show(this, $"Failed to add {Path.GetFileName(filePath)}: {ex.Message}",
                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
