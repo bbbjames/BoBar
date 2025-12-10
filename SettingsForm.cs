@@ -67,9 +67,9 @@ namespace BoBar
             //
             leftGroup.Controls.Add(_itemsList);
             leftGroup.Font = new Font(Font, FontStyle.Bold);
-            leftGroup.Location = new Point(20, 20);
+            leftGroup.Location = new Point(25, 25);
             leftGroup.Name = "leftGroup";
-            leftGroup.Size = new Size(420, 560);
+            leftGroup.Size = new Size(450, 600);
             leftGroup.TabIndex = 0;
             leftGroup.TabStop = false;
             leftGroup.Text = "Launch Items";
@@ -77,11 +77,12 @@ namespace BoBar
             // _itemsList
             //
             _itemsList.DisplayMember = "Name";
-            _itemsList.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Regular);
+            _itemsList.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
             _itemsList.FormattingEnabled = true;
-            _itemsList.Location = new Point(15, 30);
+            _itemsList.ItemHeight = 18;
+            _itemsList.Location = new Point(18, 35);
             _itemsList.Name = "_itemsList";
-            _itemsList.Size = new Size(390, 515);
+            _itemsList.Size = new Size(414, 545);
             _itemsList.TabIndex = 0;
             _itemsList.SelectedIndexChanged += ItemsList_SelectedIndexChanged;
             //
@@ -98,121 +99,125 @@ namespace BoBar
             rightGroup.Controls.Add(_moveUpButton);
             rightGroup.Controls.Add(_moveDownButton);
             rightGroup.Font = new Font(Font, FontStyle.Bold);
-            rightGroup.Location = new Point(460, 20);
+            rightGroup.Location = new Point(495, 25);
             rightGroup.Name = "rightGroup";
-            rightGroup.Size = new Size(260, 560);
+            rightGroup.Size = new Size(280, 600);
             rightGroup.TabIndex = 1;
             rightGroup.TabStop = false;
             rightGroup.Text = "Actions";
             //
             // addLabel
             //
-            addLabel.Font = new Font(Font.FontFamily, Font.Size + 1, FontStyle.Bold);
-            addLabel.Location = new Point(15, 30);
+            addLabel.Font = new Font(Font.FontFamily, 10f, FontStyle.Bold);
+            addLabel.Location = new Point(18, 38);
             addLabel.Name = "addLabel";
-            addLabel.Size = new Size(230, 22);
+            addLabel.Size = new Size(244, 28);
             addLabel.TabIndex = 0;
             addLabel.Text = "Add Items";
             //
             // _dropPanel
             //
-            _dropPanel.BackColor = Color.FromArgb(245, 245, 245);
+            _dropPanel.BackColor = Color.FromArgb(248, 248, 248);
             _dropPanel.BorderStyle = BorderStyle.FixedSingle;
             _dropPanel.Controls.Add(dropInstruction);
-            _dropPanel.Location = new Point(15, 60);
+            _dropPanel.Location = new Point(18, 68);
             _dropPanel.Name = "_dropPanel";
-            _dropPanel.Size = new Size(230, 110);
+            _dropPanel.Size = new Size(244, 125);
             _dropPanel.TabIndex = 1;
             //
             // dropInstruction
             //
             dropInstruction.Dock = DockStyle.Fill;
-            dropInstruction.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Regular);
+            dropInstruction.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
             dropInstruction.ForeColor = Color.FromArgb(100, 100, 100);
             dropInstruction.Location = new Point(0, 0);
             dropInstruction.Name = "dropInstruction";
-            dropInstruction.Size = new Size(228, 108);
+            dropInstruction.Size = new Size(242, 123);
             dropInstruction.TabIndex = 0;
             dropInstruction.Text = "Drag .exe files here\r\n\r\nto add to launcher";
             dropInstruction.TextAlign = ContentAlignment.MiddleCenter;
             //
             // separator1
             //
-            separator1.BorderStyle = BorderStyle.Fixed3D;
-            separator1.Location = new Point(15, 190);
+            separator1.BorderStyle = BorderStyle.FixedSingle;
+            separator1.Location = new Point(18, 213);
             separator1.Name = "separator1";
-            separator1.Size = new Size(230, 2);
+            separator1.Size = new Size(244, 1);
             separator1.TabIndex = 2;
             //
             // editLabel
             //
-            editLabel.Font = new Font(Font.FontFamily, Font.Size + 1, FontStyle.Bold);
-            editLabel.Location = new Point(15, 210);
+            editLabel.Font = new Font(Font.FontFamily, 10f, FontStyle.Bold);
+            editLabel.Location = new Point(18, 233);
             editLabel.Name = "editLabel";
-            editLabel.Size = new Size(230, 22);
+            editLabel.Size = new Size(244, 28);
             editLabel.TabIndex = 3;
             editLabel.Text = "Modify Selected";
             //
             // _editButton
             //
-            _editButton.Font = new Font(Font.FontFamily, Font.Size + 0.5f, FontStyle.Regular);
-            _editButton.Location = new Point(15, 245);
+            _editButton.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
+            _editButton.Location = new Point(18, 268);
             _editButton.Name = "_editButton";
-            _editButton.Size = new Size(230, 40);
+            _editButton.Size = new Size(244, 45);
             _editButton.TabIndex = 4;
             _editButton.Text = "✎  Edit Item";
             _editButton.UseVisualStyleBackColor = true;
+            _editButton.Cursor = Cursors.Hand;
             _editButton.Click += EditButton_Click;
             //
             // _removeButton
             //
-            _removeButton.Font = new Font(Font.FontFamily, Font.Size + 0.5f, FontStyle.Regular);
+            _removeButton.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
             _removeButton.ForeColor = Color.FromArgb(180, 0, 0);
-            _removeButton.Location = new Point(15, 295);
+            _removeButton.Location = new Point(18, 321);
             _removeButton.Name = "_removeButton";
-            _removeButton.Size = new Size(230, 40);
+            _removeButton.Size = new Size(244, 45);
             _removeButton.TabIndex = 5;
             _removeButton.Text = "✕  Remove Item";
             _removeButton.UseVisualStyleBackColor = true;
+            _removeButton.Cursor = Cursors.Hand;
             _removeButton.Click += RemoveButton_Click;
             //
             // separator2
             //
-            separator2.BorderStyle = BorderStyle.Fixed3D;
-            separator2.Location = new Point(15, 355);
+            separator2.BorderStyle = BorderStyle.FixedSingle;
+            separator2.Location = new Point(18, 380);
             separator2.Name = "separator2";
-            separator2.Size = new Size(230, 2);
+            separator2.Size = new Size(244, 1);
             separator2.TabIndex = 6;
             //
             // reorderLabel
             //
-            reorderLabel.Font = new Font(Font.FontFamily, Font.Size + 1, FontStyle.Bold);
-            reorderLabel.Location = new Point(15, 375);
+            reorderLabel.Font = new Font(Font.FontFamily, 10f, FontStyle.Bold);
+            reorderLabel.Location = new Point(18, 400);
             reorderLabel.Name = "reorderLabel";
-            reorderLabel.Size = new Size(230, 22);
+            reorderLabel.Size = new Size(244, 28);
             reorderLabel.TabIndex = 7;
             reorderLabel.Text = "Change Order";
             //
             // _moveUpButton
             //
-            _moveUpButton.Font = new Font(Font.FontFamily, Font.Size + 0.5f, FontStyle.Regular);
-            _moveUpButton.Location = new Point(15, 410);
+            _moveUpButton.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
+            _moveUpButton.Location = new Point(18, 438);
             _moveUpButton.Name = "_moveUpButton";
-            _moveUpButton.Size = new Size(230, 35);
+            _moveUpButton.Size = new Size(244, 43);
             _moveUpButton.TabIndex = 8;
             _moveUpButton.Text = "▲  Move Up";
             _moveUpButton.UseVisualStyleBackColor = true;
+            _moveUpButton.Cursor = Cursors.Hand;
             _moveUpButton.Click += MoveUpButton_Click;
             //
             // _moveDownButton
             //
-            _moveDownButton.Font = new Font(Font.FontFamily, Font.Size + 0.5f, FontStyle.Regular);
-            _moveDownButton.Location = new Point(15, 450);
+            _moveDownButton.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
+            _moveDownButton.Location = new Point(18, 489);
             _moveDownButton.Name = "_moveDownButton";
-            _moveDownButton.Size = new Size(230, 35);
+            _moveDownButton.Size = new Size(244, 43);
             _moveDownButton.TabIndex = 9;
             _moveDownButton.Text = "▼  Move Down";
             _moveDownButton.UseVisualStyleBackColor = true;
+            _moveDownButton.Cursor = Cursors.Hand;
             _moveDownButton.Click += MoveDownButton_Click;
             //
             // _saveAndCloseButton
@@ -221,11 +226,11 @@ namespace BoBar
             _saveAndCloseButton.Cursor = Cursors.Hand;
             _saveAndCloseButton.FlatAppearance.BorderSize = 0;
             _saveAndCloseButton.FlatStyle = FlatStyle.Flat;
-            _saveAndCloseButton.Font = new Font(Font.FontFamily, Font.Size + 1, FontStyle.Bold);
+            _saveAndCloseButton.Font = new Font(Font.FontFamily, 10f, FontStyle.Bold);
             _saveAndCloseButton.ForeColor = Color.White;
-            _saveAndCloseButton.Location = new Point(410, 600);
+            _saveAndCloseButton.Location = new Point(440, 645);
             _saveAndCloseButton.Name = "_saveAndCloseButton";
-            _saveAndCloseButton.Size = new Size(150, 45);
+            _saveAndCloseButton.Size = new Size(160, 50);
             _saveAndCloseButton.TabIndex = 2;
             _saveAndCloseButton.Text = "Save && Close";
             _saveAndCloseButton.UseVisualStyleBackColor = false;
@@ -233,18 +238,19 @@ namespace BoBar
             //
             // _cancelButton
             //
-            _cancelButton.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Regular);
-            _cancelButton.Location = new Point(570, 600);
+            _cancelButton.Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular);
+            _cancelButton.Location = new Point(615, 645);
             _cancelButton.Name = "_cancelButton";
-            _cancelButton.Size = new Size(150, 45);
+            _cancelButton.Size = new Size(160, 50);
             _cancelButton.TabIndex = 3;
             _cancelButton.Text = "Discard Changes";
+            _cancelButton.Cursor = Cursors.Hand;
             _cancelButton.UseVisualStyleBackColor = true;
             _cancelButton.Click += CancelButton_Click;
             //
             // SettingsForm
             //
-            ClientSize = new Size(750, 670);
+            ClientSize = new Size(805, 720);
             Controls.Add(leftGroup);
             Controls.Add(rightGroup);
             Controls.Add(_saveAndCloseButton);

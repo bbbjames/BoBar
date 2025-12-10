@@ -6,6 +6,7 @@ namespace BoBar
     {
         private readonly LaunchItem _item;
 
+        private GroupBox _detailsGroup = null!;
         private TextBox _nameTextBox = null!;
         private TextBox _pathTextBox = null!;
         private TextBox _argsTextBox = null!;
@@ -25,34 +26,47 @@ namespace BoBar
         private void InitializeComponent()
         {
             Text = "Edit Launch Item";
-            Size = new Size(520, 310);
+            Size = new Size(740, 390);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             StartPosition = FormStartPosition.CenterParent;
 
+            _detailsGroup = new GroupBox();
+            _detailsGroup.SuspendLayout();
+            SuspendLayout();
+
+            // GroupBox for details
+            _detailsGroup.Text = "Item Details";
+            _detailsGroup.Font = new Font(Font, FontStyle.Bold);
+            _detailsGroup.Location = new Point(20, 20);
+            _detailsGroup.Size = new Size(700, 280);
+            _detailsGroup.TabIndex = 0;
+
             int leftMargin = 20;
-            int labelWidth = 80;
+            int labelWidth = 90;
             int controlLeft = leftMargin + labelWidth + 10;
-            int controlWidth = 300;
-            int browseWidth = 85;
-            int rowHeight = 35;
-            int currentY = 20;
+            int controlWidth = 480;
+            int browseWidth = 90;
+            int rowHeight = 45;
+            int currentY = 35;
 
             // Name
             var nameLabel = new Label
             {
                 Text = "Name:",
-                Location = new Point(leftMargin, currentY + 3),
-                Size = new Size(labelWidth, 23),
-                TextAlign = ContentAlignment.MiddleRight
+                Location = new Point(leftMargin, currentY + 6),
+                Size = new Size(labelWidth, 28),
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular)
             };
             _nameTextBox = new TextBox
             {
                 Location = new Point(controlLeft, currentY),
-                Size = new Size(controlWidth + browseWidth + 10, 25)
+                Size = new Size(controlWidth + browseWidth + 10, 30),
+                Font = new Font(Font.FontFamily, 9.5f)
             };
-            Controls.AddRange(new Control[] { nameLabel, _nameTextBox });
+            _detailsGroup.Controls.AddRange(new Control[] { nameLabel, _nameTextBox });
 
             currentY += rowHeight;
 
@@ -60,23 +74,27 @@ namespace BoBar
             var pathLabel = new Label
             {
                 Text = "Path:",
-                Location = new Point(leftMargin, currentY + 3),
-                Size = new Size(labelWidth, 23),
-                TextAlign = ContentAlignment.MiddleRight
+                Location = new Point(leftMargin, currentY + 6),
+                Size = new Size(labelWidth, 28),
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular)
             };
             _pathTextBox = new TextBox
             {
                 Location = new Point(controlLeft, currentY),
-                Size = new Size(controlWidth, 25)
+                Size = new Size(controlWidth, 30),
+                Font = new Font(Font.FontFamily, 9.5f)
             };
             _browseButton = new Button
             {
                 Text = "Browse...",
-                Location = new Point(controlLeft + controlWidth + 10, currentY),
-                Size = new Size(browseWidth, 27)
+                Location = new Point(controlLeft + controlWidth + 10, currentY - 1),
+                Size = new Size(browseWidth, 32),
+                Font = new Font(Font.FontFamily, 9f, FontStyle.Regular),
+                Cursor = Cursors.Hand
             };
             _browseButton.Click += BrowseButton_Click;
-            Controls.AddRange(new Control[] { pathLabel, _pathTextBox, _browseButton });
+            _detailsGroup.Controls.AddRange(new Control[] { pathLabel, _pathTextBox, _browseButton });
 
             currentY += rowHeight;
 
@@ -84,16 +102,19 @@ namespace BoBar
             var argsLabel = new Label
             {
                 Text = "Arguments:",
-                Location = new Point(leftMargin, currentY + 3),
-                Size = new Size(labelWidth, 23),
-                TextAlign = ContentAlignment.MiddleRight
+                Location = new Point(leftMargin, currentY + 6),
+                Size = new Size(labelWidth, 28),
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular)
             };
             _argsTextBox = new TextBox
             {
                 Location = new Point(controlLeft, currentY),
-                Size = new Size(controlWidth + browseWidth + 10, 25)
+                Size = new Size(controlWidth + browseWidth + 10, 30),
+                Font = new Font(Font.FontFamily, 9.5f),
+                ForeColor = Color.DimGray
             };
-            Controls.AddRange(new Control[] { argsLabel, _argsTextBox });
+            _detailsGroup.Controls.AddRange(new Control[] { argsLabel, _argsTextBox });
 
             currentY += rowHeight;
 
@@ -101,23 +122,28 @@ namespace BoBar
             var workDirLabel = new Label
             {
                 Text = "Start in:",
-                Location = new Point(leftMargin, currentY + 3),
-                Size = new Size(labelWidth, 23),
-                TextAlign = ContentAlignment.MiddleRight
+                Location = new Point(leftMargin, currentY + 6),
+                Size = new Size(labelWidth, 28),
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font(Font.FontFamily, 9.5f, FontStyle.Regular)
             };
             _workDirTextBox = new TextBox
             {
                 Location = new Point(controlLeft, currentY),
-                Size = new Size(controlWidth, 25)
+                Size = new Size(controlWidth, 30),
+                Font = new Font(Font.FontFamily, 9.5f),
+                ForeColor = Color.DimGray
             };
             _browseWorkDirButton = new Button
             {
                 Text = "Browse...",
-                Location = new Point(controlLeft + controlWidth + 10, currentY),
-                Size = new Size(browseWidth, 27)
+                Location = new Point(controlLeft + controlWidth + 10, currentY - 1),
+                Size = new Size(browseWidth, 32),
+                Font = new Font(Font.FontFamily, 9f, FontStyle.Regular),
+                Cursor = Cursors.Hand
             };
             _browseWorkDirButton.Click += BrowseWorkDirButton_Click;
-            Controls.AddRange(new Control[] { workDirLabel, _workDirTextBox, _browseWorkDirButton });
+            _detailsGroup.Controls.AddRange(new Control[] { workDirLabel, _workDirTextBox, _browseWorkDirButton });
 
             currentY += rowHeight;
 
@@ -125,33 +151,45 @@ namespace BoBar
             var hintLabel = new Label
             {
                 Text = "Leave 'Start in' empty to use the executable's folder",
-                Location = new Point(controlLeft, currentY),
-                Size = new Size(controlWidth + browseWidth + 10, 35),
+                Location = new Point(controlLeft, currentY + 5),
+                Size = new Size(controlWidth + browseWidth + 10, 40),
                 ForeColor = Color.Gray,
-                Font = new Font(Font.FontFamily, 8f, FontStyle.Italic)
+                Font = new Font(Font.FontFamily, 8.5f, FontStyle.Italic)
             };
-            Controls.Add(hintLabel);
+            _detailsGroup.Controls.Add(hintLabel);
 
-            currentY += 50;
+            Controls.Add(_detailsGroup);
 
             // Buttons
             _okButton = new Button
             {
                 Text = "Save",
-                Location = new Point(controlLeft + controlWidth - 85, currentY),
-                Size = new Size(85, 32),
-                DialogResult = DialogResult.OK
+                Location = new Point(520, 320),
+                Size = new Size(95, 42),
+                DialogResult = DialogResult.OK,
+                BackColor = Color.FromArgb(0, 120, 215),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font(Font.FontFamily, 9.5f, FontStyle.Bold),
+                Cursor = Cursors.Hand
             };
+            _okButton.FlatAppearance.BorderSize = 0;
+
             _cancelButton = new Button
             {
                 Text = "Cancel",
-                Location = new Point(controlLeft + controlWidth + 10, currentY),
-                Size = new Size(85, 32),
-                DialogResult = DialogResult.Cancel
+                Location = new Point(625, 320),
+                Size = new Size(95, 42),
+                DialogResult = DialogResult.Cancel,
+                Font = new Font(Font.FontFamily, 9f, FontStyle.Regular),
+                Cursor = Cursors.Hand
             };
 
             _okButton.Click += OkButton_Click;
             Controls.AddRange(new Control[] { _okButton, _cancelButton });
+
+            _detailsGroup.ResumeLayout(false);
+            ResumeLayout(false);
 
             AcceptButton = _okButton;
             CancelButton = _cancelButton;
