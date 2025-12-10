@@ -231,7 +231,7 @@ public partial class SettingsForm : Form
         _saveAndCloseButton.Name = "_saveAndCloseButton";
         _saveAndCloseButton.Size = new Size(160, 50);
         _saveAndCloseButton.TabIndex = 2;
-        _saveAndCloseButton.Text = "Save && Close";
+        _saveAndCloseButton.Text = "Save";
         _saveAndCloseButton.UseVisualStyleBackColor = false;
         _saveAndCloseButton.Click += SaveAndCloseButton_Click;
         //
