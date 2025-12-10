@@ -1,4 +1,4 @@
-namespace BoBar;
+﻿namespace BoBar;
 internal static class Program
 {
     /// <summary>

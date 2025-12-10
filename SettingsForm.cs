@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace BoBar;
 public partial class SettingsForm : Form
@@ -160,7 +160,7 @@ public partial class SettingsForm : Form
         _editButton.Name = "_editButton";
         _editButton.Size = new Size(244, 45);
         _editButton.TabIndex = 4;
-        _editButton.Text = "âœŽ  Edit Item";
+        _editButton.Text = "✎  Edit Item";
         _editButton.UseVisualStyleBackColor = true;
         _editButton.Cursor = Cursors.Hand;
         _editButton.Click += EditButton_Click;
@@ -173,7 +173,7 @@ public partial class SettingsForm : Form
         _removeButton.Name = "_removeButton";
         _removeButton.Size = new Size(244, 45);
         _removeButton.TabIndex = 5;
-        _removeButton.Text = "âœ•  Remove Item";
+        _removeButton.Text = "✕  Remove Item";
         _removeButton.UseVisualStyleBackColor = true;
         _removeButton.Cursor = Cursors.Hand;
         _removeButton.Click += RemoveButton_Click;
@@ -202,7 +202,7 @@ public partial class SettingsForm : Form
         _moveUpButton.Name = "_moveUpButton";
         _moveUpButton.Size = new Size(244, 43);
         _moveUpButton.TabIndex = 8;
-        _moveUpButton.Text = "â–²  Move Up";
+        _moveUpButton.Text = "▲  Move Up";
         _moveUpButton.UseVisualStyleBackColor = true;
         _moveUpButton.Cursor = Cursors.Hand;
         _moveUpButton.Click += MoveUpButton_Click;
@@ -214,7 +214,7 @@ public partial class SettingsForm : Form
         _moveDownButton.Name = "_moveDownButton";
         _moveDownButton.Size = new Size(244, 43);
         _moveDownButton.TabIndex = 9;
-        _moveDownButton.Text = "â–¼  Move Down";
+        _moveDownButton.Text = "▼  Move Down";
         _moveDownButton.UseVisualStyleBackColor = true;
         _moveDownButton.Cursor = Cursors.Hand;
         _moveDownButton.Click += MoveDownButton_Click;

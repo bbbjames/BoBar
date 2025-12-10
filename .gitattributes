@@ -1,19 +1,19 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# C# source files should always use CRLF on Windows
-*.cs text eol=crlf
+# C# source files should always use CRLF on Windows with UTF-8 encoding
+*.cs text eol=crlf encoding=UTF-8
 *.csproj text eol=crlf
 *.sln text eol=crlf
 
 # JSON, XML, and config files
-*.json text eol=crlf
+*.json text eol=crlf encoding=UTF-8
 *.xml text eol=crlf
 *.ini text eol=crlf
-*.md text eol=crlf
+*.md text eol=crlf encoding=UTF-8
 
 # Scripts
-*.ps1 text eol=crlf
+*.ps1 text eol=crlf encoding=UTF-8
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
