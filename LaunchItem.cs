@@ -7,6 +7,7 @@ namespace BoBar
         public string Name { get; set; } = string.Empty;
         public string ExecutablePath { get; set; } = string.Empty;
         public string Arguments { get; set; } = string.Empty;
+        public string WorkingDirectory { get; set; } = string.Empty;
         public string IconPath { get; set; } = string.Empty;
         public int Order { get; set; }
 
@@ -16,6 +17,16 @@ namespace BoBar
         {
             ExecutablePath = executablePath;
             Name = Path.GetFileNameWithoutExtension(executablePath);
+
+            // Set working directory to the executable's directory
+            try
+            {
+                WorkingDirectory = Path.GetDirectoryName(executablePath) ?? string.Empty;
+            }
+            catch
+            {
+                WorkingDirectory = string.Empty;
+            }
 
             // Try to extract high-quality icon from executable
             try
@@ -115,6 +126,12 @@ namespace BoBar
                     Arguments = Arguments,
                     UseShellExecute = true
                 };
+
+                // Set working directory if specified
+                if (!string.IsNullOrWhiteSpace(WorkingDirectory) && Directory.Exists(WorkingDirectory))
+                {
+                    startInfo.WorkingDirectory = WorkingDirectory;
+                }
                 
                 System.Diagnostics.Process.Start(startInfo);
             }
