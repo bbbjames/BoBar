@@ -323,7 +323,7 @@ namespace BoBar
                     FlatStyle = FlatStyle.Flat,
                     Tag = "Dynamic",
                     BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
-                    Margin = new Padding(3, 11, 0, 0)
+                    Margin = new Padding(3, 11, 0, 11)
                 };
 
                 button.FlatAppearance.BorderSize = 1;
