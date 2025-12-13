@@ -1,0 +1,86 @@
+name: Build and Release BoBar
+
+on:
+  push:
+    tags:
+      - 'v*'   # triggers on version tags like v0.1.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Publish app (Framework-Dependent)
+        run: |
+          dotnet publish -c Release -r win-x64 --no-self-contained `
+            -p:DebugType=none `
+            -p:DebugSymbols=false `
+            -o ./publish
+
+      - name: Verify required files
+        shell: pwsh
+        run: |
+          Write-Host "Checking for required files..."
+          $requiredFiles = @(
+            ".\publish\BoBar.exe",
+            ".\publish\default_settings.ini",
+            ".\publish\default_launchitems.json"
+          )
+          foreach ($file in $requiredFiles) {
+            if (Test-Path $file) {
+              Write-Host "? Found: $file"
+            } else {
+              Write-Error "? Missing: $file"
+              exit 1
+            }
+          }
+          Write-Host "`nAll required files present!"
+
+      - name: Create release archive
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+          $archiveName = "BoBar-$version-win-x64.zip"
+          Compress-Archive -Path ./publish/* -DestinationPath $archiveName
+          Write-Host "Created archive: $archiveName"
+          echo "ARCHIVE_NAME=$archiveName" >> $env:GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BoBar-win-x64-${{ github.ref_name }}
+          path: ${{ env.ARCHIVE_NAME }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ARCHIVE_NAME }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+          body: |
+            ## BoBar ${{ github.ref_name }}
+            
+            ### Installation
+            1. Download `${{ env.ARCHIVE_NAME }}`
+            2. Extract the ZIP file
+            3. Run `BoBar.exe`
+            
+            ### Requirements
+            - Windows 10 or later
+            - [.NET 10.0 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (Desktop Runtime)
+            
+            ### What's New
+            See [README.md](https://github.com/${{ github.repository }}/blob/master/README.md#version-history) for full changelog.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
