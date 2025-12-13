@@ -48,7 +48,6 @@
             closeToolStripMenuItem = new ToolStripMenuItem();
             flowLayoutPanel1 = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // notifyIcon1
@@ -110,7 +109,7 @@
             closeToolStripMenuItem.Size = new Size(238, 40);
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
-            //
+            // 
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.AutoSize = true;
@@ -138,7 +137,6 @@
             Text = "BobsBar";
             MouseDown += FormDrag_MouseDown;
             contextMenuStrip1.ResumeLayout(false);
-            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
