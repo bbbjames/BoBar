@@ -58,6 +58,7 @@ jobs:
           Compress-Archive -Path ./publish/* -DestinationPath $archiveName
           Write-Host "Created archive: $archiveName"
           echo "ARCHIVE_NAME=$archiveName" >> $env:GITHUB_ENV
+          echo "VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -66,29 +67,31 @@ jobs:
           path: ${{ env.ARCHIVE_NAME }}
        
       - name: Generate checksum
-          shell: pwsh
-          run: |
-            Get-FileHash $env:ARCHIVE_NAME -Algorithm SHA256 | Format-List
+        shell: pwsh
+        run: |
+          $hash = Get-FileHash $env:ARCHIVE_NAME -Algorithm SHA256
+          Write-Host "SHA256: $($hash.Hash)"
+          echo "CHECKSUM=$($hash.Hash)" >> $env:GITHUB_ENV
 
-      - name: Create GitHub Release
+      - name: Get release draft
+        id: get_release
+        uses: cardinalby/git-get-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: ${{ github.ref_name }}
+          prerelease: false
+          draft: true
+        continue-on-error: true
+
+      - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ env.ARCHIVE_NAME }}
           draft: false
-          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
-          body: |
-            ## BoBar ${{ github.ref_name }}
-            
-            ### Installation
-            1. Download `${{ env.ARCHIVE_NAME }}`
-            2. Extract the ZIP file
-            3. Run `BoBar.exe`
-            
-            ### Requirements
-            - Windows 10 or later
-            - [.NET 10.0 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (Desktop Runtime)
-            
-            ### What's New
-            See [README.md](https://github.com/${{ github.repository }}/blob/master/README.md#version-history) for full changelog.
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          body: ${{ steps.get_release.outputs.body }}
+          fail_on_unmatched_files: true
+          generate_release_notes: ${{ steps.get_release.outputs.body == '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

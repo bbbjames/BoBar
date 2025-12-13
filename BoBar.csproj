@@ -70,7 +70,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include=".github\release-drafter.yml" />
+    <None Include=".github\workflows\generate-changelog.yml" />
+    <None Include=".github\workflows\release-drafter.yml" />
     <None Include=".github\workflows\release.yml" />
+    <None Include=".github\workflows\update-changelog.yml" />
   </ItemGroup>
 
 </Project>

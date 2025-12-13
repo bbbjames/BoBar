@@ -370,6 +370,8 @@ dotnet clean
 
 ## Version History
 
+📋 **[View Full Changelog](CHANGELOG.md)** - Detailed version history with all changes
+
 ### v0.1.0.2-alpha (2025-01-03)
 - ✅ Added Windows startup integration via registry
 - ✅ Added "Load on Startup" menu option

@@ -1,0 +1,127 @@
+﻿name-template: 'BoBar v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+categories:
+  - title: '🚀 New Features'
+    labels:
+      - feature
+      - enhancement
+  - title: '🐛 Bug Fixes'
+    labels:
+      - bug
+  - title: '🎨 UI/UX Improvements'
+    labels:
+      - ui
+      - ux
+  - title: '⚡ Performance'
+    labels:
+      - performance
+  - title: '📚 Documentation'
+    labels:
+      - documentation
+  - title: '🧹 Refactoring & Maintenance'
+    labels:
+      - refactor
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&'
+
+version-resolver:
+  major:
+    labels:
+      - major
+      - breaking
+  minor:
+    labels:
+      - minor
+      - feature
+      - enhancement
+  patch:
+    labels:
+      - patch
+      - bug
+  default: patch
+
+autolabeler:
+  - label: 'bug'
+    branch:
+      - '/fix\/.+/'
+      - '/bugfix\/.+/'
+    title:
+      - '/fix/i'
+      - '/bug/i'
+  - label: 'feature'
+    branch:
+      - '/feature\/.+/'
+      - '/feat\/.+/'
+    title:
+      - '/feature/i'
+      - '/feat/i'
+  - label: 'enhancement'
+    branch:
+      - '/enhance\/.+/'
+      - '/improvement\/.+/'
+    title:
+      - '/enhance/i'
+      - '/improve/i'
+  - label: 'documentation'
+    branch:
+      - '/docs\/.+/'
+    title:
+      - '/docs/i'
+      - '/documentation/i'
+    files:
+      - '*.md'
+      - 'docs/**/*'
+  - label: 'refactor'
+    branch:
+      - '/refactor\/.+/'
+    title:
+      - '/refactor/i'
+  - label: 'ui'
+    branch:
+      - '/ui\/.+/'
+    title:
+      - '/ui/i'
+      - '/interface/i'
+  - label: 'ux'
+    title:
+      - '/ux/i'
+      - '/experience/i'
+  - label: 'performance'
+    branch:
+      - '/perf\/.+/'
+      - '/performance\/.+/'
+    title:
+      - '/perf/i'
+      - '/performance/i'
+      - '/optimization/i'
+
+template: |
+  ## What's Changed
+  
+  $CHANGES
+  
+  ## Installation
+  
+  1. Download `BoBar-$RESOLVED_VERSION-win-x64.zip` from the assets below
+  2. Extract the ZIP file to your desired location
+  3. Run `BoBar.exe`
+  
+  ## Requirements
+  
+  - Windows 10 or later
+  - [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
+  
+  ## Usage Tips
+  
+  - **First time users**: Right-click the tray icon to access settings
+  - **Add shortcuts**: Drag & drop `.exe` or `.lnk` files onto BoBar
+  - **Move toolbar**: Hold `Ctrl` and drag any button
+  - **Customize**: Right-click → Settings to edit, reorder, or remove items
+  
+  ## Documentation
+  
+  - 📋 [Full Changelog](https://github.com/$OWNER/$REPOSITORY/blob/master/CHANGELOG.md)
+  - 📖 [README](https://github.com/$OWNER/$REPOSITORY/blob/master/README.md)
+  - 🔗 [Compare Changes](https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION)
