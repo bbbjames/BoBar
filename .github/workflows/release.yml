@@ -64,6 +64,11 @@ jobs:
         with:
           name: BoBar-win-x64-${{ github.ref_name }}
           path: ${{ env.ARCHIVE_NAME }}
+       
+      - name: Generate checksum
+          shell: pwsh
+          run: |
+            Get-FileHash $env:ARCHIVE_NAME -Algorithm SHA256 | Format-List
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
