@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'   # triggers on version tags like v0.1.0
 
+permissions:
+  contents: write  # Required to create releases and upload assets
+
 jobs:
   build:
     runs-on: windows-latest
