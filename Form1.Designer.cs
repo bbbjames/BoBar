@@ -9,6 +9,7 @@
         private ToolStripMenuItem closeToolStripMenuItem;
         private ToolStripMenuItem alwaysOnTopToolStripMenuItem;
         private ToolStripMenuItem darkModeToolStripMenuItem;
+        private ToolStripMenuItem loadOnStartupToolStripMenuItem;
 
         /// <summary>
         ///  Required designer variable.
@@ -45,6 +46,7 @@
             aboutToolStripMenuItem = new ToolStripMenuItem();
             alwaysOnTopToolStripMenuItem = new ToolStripMenuItem();
             darkModeToolStripMenuItem = new ToolStripMenuItem();
+            loadOnStartupToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             flowLayoutPanel1 = new FlowLayoutPanel();
             contextMenuStrip1.SuspendLayout();
@@ -60,9 +62,9 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new Size(32, 32);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, darkModeToolStripMenuItem, closeToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { moveToolStripMenuItem, settingsToolStripMenuItem, aboutToolStripMenuItem, alwaysOnTopToolStripMenuItem, darkModeToolStripMenuItem, loadOnStartupToolStripMenuItem, closeToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(239, 244);
+            contextMenuStrip1.Size = new Size(239, 284);
             // 
             // moveToolStripMenuItem
             // 
@@ -102,6 +104,14 @@
             darkModeToolStripMenuItem.Size = new Size(238, 40);
             darkModeToolStripMenuItem.Text = "Dark mode";
             darkModeToolStripMenuItem.Click += darkModeToolStripMenuItem_Click;
+            // 
+            // loadOnStartupToolStripMenuItem
+            // 
+            loadOnStartupToolStripMenuItem.CheckOnClick = true;
+            loadOnStartupToolStripMenuItem.Name = "loadOnStartupToolStripMenuItem";
+            loadOnStartupToolStripMenuItem.Size = new Size(238, 40);
+            loadOnStartupToolStripMenuItem.Text = "Load on startup";
+            loadOnStartupToolStripMenuItem.Click += loadOnStartupToolStripMenuItem_Click;
             // 
             // closeToolStripMenuItem
             // 

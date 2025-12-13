@@ -163,6 +163,9 @@ public partial class Form1 : Form
 
         darkModeToolStripMenuItem.Checked = _config.DarkMode;
         ApplyTheme();
+
+        // ADD THIS LINE:
+        loadOnStartupToolStripMenuItem.Checked = StartupManager.IsStartupEnabled();
     }
 
     private void TrySaveWindowLocation()
@@ -212,6 +215,24 @@ public partial class Form1 : Form
         {
             _config.DarkMode = item.Checked;
             ApplyTheme();
+        }
+    }
+
+    // ADD THIS ENTIRE METHOD:
+    private void loadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (sender is ToolStripMenuItem item)
+        {
+            bool success = StartupManager.SetStartup(item.Checked);
+            if (!success)
+            {
+                item.Checked = !item.Checked;
+                MessageBox.Show(this,
+                    "Failed to update startup settings. Please check your permissions.",
+                    "Startup Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
     }
 
