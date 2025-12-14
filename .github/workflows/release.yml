@@ -125,35 +125,39 @@ jobs:
           $compareLink = if ($previousTag) { "https://github.com/${{ github.repository }}/compare/${previousTag}...${{ github.ref_name }}" } else { "" }
           $compareSection = if ($previousTag) { "- ?? [Compare Changes]($compareLink)" } else { "" }
           
-          $body = @"
-## What's Changed
-
-$changes
-
-## Installation
-
-1. Download ``BoBar-$version-win-x64.zip`` from the assets below
-2. Extract the ZIP file to your desired location
-3. Run ``BoBar.exe``
-
-## Requirements
-
-- Windows 10 or later
-- [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
-
-## Usage Tips
-
-- **First time users**: Right-click the tray icon to access settings
-- **Add shortcuts**: Drag & drop ``.exe`` or ``.lnk`` files onto BoBar
-- **Move toolbar**: Hold ``Ctrl`` and drag any button
-- **Customize**: Right-click ? Settings to edit, reorder, or remove items
-
-## Documentation
-
-- ?? [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)
-- ?? [README](https://github.com/${{ github.repository }}/blob/master/README.md)
-$compareSection
-"@
+          # Build the body parts
+          $bodyParts = @()
+          $bodyParts += "## What's Changed"
+          $bodyParts += ""
+          $bodyParts += $changes
+          $bodyParts += ""
+          $bodyParts += "## Installation"
+          $bodyParts += ""
+          $bodyParts += "1. Download ``BoBar-$version-win-x64.zip`` from the assets below"
+          $bodyParts += "2. Extract the ZIP file to your desired location"
+          $bodyParts += "3. Run ``BoBar.exe``"
+          $bodyParts += ""
+          $bodyParts += "## Requirements"
+          $bodyParts += ""
+          $bodyParts += "- Windows 10 or later"
+          $bodyParts += "- [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)"
+          $bodyParts += ""
+          $bodyParts += "## Usage Tips"
+          $bodyParts += ""
+          $bodyParts += "- **First time users**: Right-click the tray icon to access settings"
+          $bodyParts += "- **Add shortcuts**: Drag & drop ``.exe`` or ``.lnk`` files onto BoBar"
+          $bodyParts += "- **Move toolbar**: Hold ``Ctrl`` and drag any button"
+          $bodyParts += "- **Customize**: Right-click ? Settings to edit, reorder, or remove items"
+          $bodyParts += ""
+          $bodyParts += "## Documentation"
+          $bodyParts += ""
+          $bodyParts += "- ?? [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)"
+          $bodyParts += "- ?? [README](https://github.com/${{ github.repository }}/blob/master/README.md)"
+          if ($compareSection) {
+            $bodyParts += $compareSection
+          }
+          
+          $body = $bodyParts -join "`n"
           
           # Save to output with UTF-8 encoding (no BOM)
           [System.IO.File]::WriteAllText("$PWD/release_notes.md", $body, [System.Text.UTF8Encoding]::new($false))
