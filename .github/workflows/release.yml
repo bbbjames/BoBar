@@ -126,37 +126,37 @@ jobs:
           $compareSection = if ($previousTag) { "- ?? [Compare Changes]($compareLink)" } else { "" }
           
           $body = @"
-          ## What's Changed
+## What's Changed
+
+$changes
+
+## Installation
+
+1. Download ``BoBar-$version-win-x64.zip`` from the assets below
+2. Extract the ZIP file to your desired location
+3. Run ``BoBar.exe``
+
+## Requirements
+
+- Windows 10 or later
+- [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
+
+## Usage Tips
+
+- **First time users**: Right-click the tray icon to access settings
+- **Add shortcuts**: Drag & drop ``.exe`` or ``.lnk`` files onto BoBar
+- **Move toolbar**: Hold ``Ctrl`` and drag any button
+- **Customize**: Right-click ? Settings to edit, reorder, or remove items
+
+## Documentation
+
+- ?? [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)
+- ?? [README](https://github.com/${{ github.repository }}/blob/master/README.md)
+$compareSection
+"@
           
-          $changes
-          
-          ## Installation
-          
-          1. Download ``BoBar-$version-win-x64.zip`` from the assets below
-          2. Extract the ZIP file to your desired location
-          3. Run ``BoBar.exe``
-          
-          ## Requirements
-          
-          - Windows 10 or later
-          - [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
-          
-          ## Usage Tips
-          
-          - **First time users**: Right-click the tray icon to access settings
-          - **Add shortcuts**: Drag & drop ``.exe`` or ``.lnk`` files onto BoBar
-          - **Move toolbar**: Hold ``Ctrl`` and drag any button
-          - **Customize**: Right-click ? Settings to edit, reorder, or remove items
-          
-          ## Documentation
-          
-          - ?? [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)
-          - ?? [README](https://github.com/${{ github.repository }}/blob/master/README.md)
-          $compareSection
-          "@
-          
-          # Save to output
-          $body | Out-File -FilePath release_notes.md -Encoding utf8
+          # Save to output with UTF-8 encoding (no BOM)
+          [System.IO.File]::WriteAllText("$PWD/release_notes.md", $body, [System.Text.UTF8Encoding]::new($false))
           echo "generated=true" >> $env:GITHUB_OUTPUT
 
       - name: Create or Update GitHub Release
