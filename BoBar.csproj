@@ -12,10 +12,10 @@
     <Copyright>Copyright © bbbjames 2025</Copyright>
     <Company>bobjames.dev</Company>
     <Product>BoBar</Product>
-    <AssemblyVersion>0.1.0.10</AssemblyVersion>
-    <FileVersion>0.1.0.10</FileVersion>
-	<Version>0.1.0.10</Version>
-	<InformationalVersion>0.1.0.10-alpha</InformationalVersion>
+    <AssemblyVersion>0.1.0.11</AssemblyVersion>
+    <FileVersion>0.1.0.11</FileVersion>
+	<Version>0.1.0.11</Version>
+	<InformationalVersion>0.1.0.11-alpha</InformationalVersion>
     <Description>BoBar - Application Launcher Bar</Description>
 
     <!-- Reduce publish size -->
