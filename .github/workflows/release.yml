@@ -82,6 +82,7 @@ jobs:
           tag: ${{ github.ref_name }}
           prerelease: false
           draft: true
+          doNotFailIfNotFound: true
         continue-on-error: true
 
       - name: Create or Update GitHub Release
