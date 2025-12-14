@@ -123,7 +123,7 @@ jobs:
           
           # Build release body with template
           $compareLink = if ($previousTag) { "https://github.com/${{ github.repository }}/compare/${previousTag}...${{ github.ref_name }}" } else { "" }
-          $compareSection = if ($previousTag) { "- ?? [Compare Changes]($compareLink)" } else { "" }
+          $compareSection = if ($previousTag) { "- $([char]0x1F517) [Compare Changes]($compareLink)" } else { "" }
           
           # Build the body parts
           $bodyParts = @()
@@ -147,12 +147,12 @@ jobs:
           $bodyParts += "- **First time users**: Right-click the tray icon to access settings"
           $bodyParts += "- **Add shortcuts**: Drag & drop ``.exe`` or ``.lnk`` files onto BoBar"
           $bodyParts += "- **Move toolbar**: Hold ``Ctrl`` and drag any button"
-          $bodyParts += "- **Customize**: Right-click ? Settings to edit, reorder, or remove items"
+          $bodyParts += "- **Customize**: Right-click $([char]0x2192) Settings to edit, reorder, or remove items"
           $bodyParts += ""
           $bodyParts += "## Documentation"
           $bodyParts += ""
-          $bodyParts += "- ?? [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)"
-          $bodyParts += "- ?? [README](https://github.com/${{ github.repository }}/blob/master/README.md)"
+          $bodyParts += "- $([char]0x1F4CB) [Full Changelog](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)"
+          $bodyParts += "- $([char]0x1F4D6) [README](https://github.com/${{ github.repository }}/blob/master/README.md)"
           if ($compareSection) {
             $bodyParts += $compareSection
           }
