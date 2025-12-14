@@ -368,9 +368,16 @@ public partial class SettingsForm : Form
 
     private void RefreshItemsList()
     {
+        int selectedIndex = _itemsList.SelectedIndex;
         _itemsList.DataSource = null;
+        _itemsList.DataSource = new List<LaunchItem>(_launchItems);
         _itemsList.DisplayMember = "Name";
-        _itemsList.DataSource = _launchItems;
+
+        if (selectedIndex >= 0 && selectedIndex < _launchItems.Count)
+        {
+            _itemsList.SelectedIndex = selectedIndex;
+        }
+
         UpdateButtonStates();
     }
 
