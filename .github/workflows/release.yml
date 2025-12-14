@@ -73,14 +73,13 @@ jobs:
           Write-Host "SHA256: $($hash.Hash)"
           echo "CHECKSUM=$($hash.Hash)" >> $env:GITHUB_ENV
 
-      - name: Get release draft
+      - name: Try to get existing draft release
         id: get_release
         uses: cardinalby/git-get-release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag: ${{ github.ref_name }}
-          prerelease: false
           draft: true
           doNotFailIfNotFound: true
         continue-on-error: true
@@ -91,8 +90,8 @@ jobs:
           files: ${{ env.ARCHIVE_NAME }}
           draft: false
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
-          body: ${{ steps.get_release.outputs.body }}
+          body: ${{ steps.get_release.outputs.body != '' && steps.get_release.outputs.body || '' }}
           fail_on_unmatched_files: true
-          generate_release_notes: ${{ steps.get_release.outputs.body == '' }}
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
