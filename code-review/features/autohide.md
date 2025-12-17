@@ -9,149 +9,47 @@ To ensure a smooth user experience, the auto-hide feature must address the follo
 
 ## Implementation Plan
 
-### 1. Add Fields to `Form1`
-We need to track state, original dimensions, and the timer.
+### 1. State Management
+The form tracks its state using several fields:
+*   **Timers**: Three timers manage the feature: `_autoHideTimer` (triggers collapse), `_animationTimer` (smooth resizing), and `_fadeTimer` (action button visibility).
+*   **State Flags**: `_isAutoHidden` tracks if the bar is collapsed, and `_autoHideEnabled` tracks the user preference.
+*   **Dimensions**: `_expandedSize` and `_expandedLocation` store the bar's full size and position to allow accurate restoration.
+*   **Action Button**: A reference to the `RoundedButton` used for toggling the bar.
+*   **Fade State**: Fields to track current opacity and base colors for the action button fade effect.
 
-```csharp
-private System.Windows.Forms.Timer _autoHideTimer;
-private bool _isAutoHidden;
-private bool _autoHideEnabled = false; // Default to false
-private Size _expandedSize;
-private Point _expandedLocation;
-private const int HiddenHeight = 6; // Height of the visible "lip"
-```
+### 2. Initialization
+*   All timers are initialized in the constructor.
+*   The `AutoHide` setting is loaded from `ConfigurationManager` on startup.
+*   The initial state (collapsed or expanded) is applied based on the saved preference.
 
-### 2. Initialize in Constructor
-Setup the timer and subscribe to events.
+### 3. Timer Logic (Hide Action)
+*   The `_autoHideTimer` ticks every 2 seconds.
+*   It checks if the mouse is over the form or if the bar is already hidden/animating.
+*   If safe to hide, it triggers `CollapseWindow`.
+*   `CollapseWindow` saves the current size/location, disables `AutoSize`, switches the action button symbol to "Expand" (ChevronRight), and starts the animation timer.
 
-```csharp
-public Form1()
-{
-    InitializeComponent();
-    // ... existing code ...
+### 4. Restore Logic (Show Action)
+*   `OnMouseEnter` and `OnMouseMove` events trigger `ExpandWindow`.
+*   `ExpandWindow` starts the animation timer to restore the bar to its full size.
 
-    // Initialize auto-hide timer
-    _autoHideTimer = new System.Windows.Forms.Timer { Interval = 2000 }; // 2 seconds
-    _autoHideTimer.Tick += AutoHideTimer_Tick;
-    
-    // ... existing code ...
-}
-```
+### 5. Animation Logic
+*   The `_animationTimer` handles smooth resizing between the collapsed state (showing only the action button) and the expanded state.
+*   It uses a simple linear interpolation (lerp) to adjust the form's width and height.
+*   When expansion completes:
+    *   `AutoSize` is re-enabled.
+    *   The `_autoHideTimer` is restarted.
+    *   The action button symbol switches to "Collapse" (ChevronLeft).
 
-### 3. Implement Timer Logic (The "Hide" Action)
-This logic needs to be smart about where the bar is positioned.
+### 6. Action Button & Fade Logic
+*   **Toggle**: The user can enable/disable auto-hide via the context menu.
+*   **Fade In**: When auto-hide is enabled, the action button fades in to full opacity.
+*   **Fade Out**: When auto-hide is disabled, the action button fades out and is hidden from the layout.
+*   **Color Handling**: The fade logic interpolates the alpha channel of the button's background, foreground, and border colors.
 
-```csharp
-private void AutoHideTimer_Tick(object? sender, EventArgs e)
-{
-    // 1. Safety Check: Don't hide if mouse is over the form
-    if (this.Bounds.Contains(Cursor.Position)) return;
-    
-    // 2. Don't hide if already hidden or disabled
-    if (_isAutoHidden || !_autoHideEnabled) return;
+### 7. Persistence
+*   The `AutoHide` boolean setting is added to `AppConfiguration`.
+*   `ConfigurationManager` loads and saves this setting to `settings.ini`.
+*   `Form1` ensures the in-memory configuration is updated whenever the setting is toggled.
 
-    // 3. Save state before hiding
-    _expandedSize = this.Size;
-    _expandedLocation = this.Location;
-
-    // 4. Determine Screen Edge (Top vs Bottom)
-    var screen = Screen.FromPoint(this.Location);
-    var workingArea = screen.WorkingArea;
-    
-    // Check if we are closer to the bottom edge
-    bool isBottom = Math.Abs((Top + Height) - workingArea.Bottom) < 50; // Tolerance
-
-    // 5. Apply Hide
-    this.AutoSize = false; // Important: Disable AutoSize to allow manual resizing
-    
-    if (isBottom)
-    {
-        // If at bottom, we need to move Top DOWN so the bottom of the form stays at the bottom of the screen
-        // Actually, we want the TOP of the form to move DOWN, leaving only the top lip visible? 
-        // No, if it's at the bottom, we want it to slide DOWN, leaving the TOP lip visible.
-        
-        // Wait, if it's at the bottom, and we shrink height, the Top stays fixed, so the bottom moves UP.
-        // This makes it float.
-        // We want the Bottom to stay fixed.
-        
-        int newTop = _expandedLocation.Y + (_expandedSize.Height - HiddenHeight);
-        this.SetBounds(newTop: newTop, x: _expandedLocation.X, width: _expandedSize.Width, height: HiddenHeight);
-    }
-    else
-    {
-        // If at top (or floating), just shrink height. Top stays fixed.
-        this.Size = new Size(_expandedSize.Width, HiddenHeight);
-    }
-
-    _isAutoHidden = true;
-}
-```
-
-### 4. Implement Restore Logic (The "Show" Action)
-We use `OnMouseEnter` to trigger the restore.
-
-```csharp
-protected override void OnMouseEnter(EventArgs e)
-{
-    base.OnMouseEnter(e);
-    RestoreWindow();
-}
-
-// Also handle mouse move in case Enter is missed (fast movement)
-protected override void OnMouseMove(MouseEventArgs e)
-{
-    base.OnMouseMove(e);
-    RestoreWindow();
-}
-
-private void RestoreWindow()
-{
-    if (!_isAutoHidden) return;
-
-    // Restore
-    this.Location = _expandedLocation;
-    this.Size = _expandedSize;
-    this.AutoSize = true; // Re-enable AutoSize
-    
-    _isAutoHidden = false;
-    
-    // Reset timer
-    _autoHideTimer.Stop();
-    _autoHideTimer.Start();
-}
-```
-
-### 5. Add Context Menu Toggle
-Add a menu item to `contextMenuStrip1` to toggle the feature.
-
-```csharp
-// In Form1.Designer.cs or InitializeComponent
-private ToolStripMenuItem autoHideToolStripMenuItem;
-
-// In Form1 constructor or InitializeComponent
-autoHideToolStripMenuItem = new ToolStripMenuItem();
-autoHideToolStripMenuItem.Text = "Auto-hide";
-autoHideToolStripMenuItem.CheckOnClick = true;
-autoHideToolStripMenuItem.Click += (s, e) => 
-{
-    _autoHideEnabled = autoHideToolStripMenuItem.Checked;
-    if (_autoHideEnabled)
-        _autoHideTimer.Start();
-    else
-    {
-        _autoHideTimer.Stop();
-        if (_isAutoHidden) RestoreWindow();
-    }
-};
-contextMenuStrip1.Items.Add(autoHideToolStripMenuItem);
-```
-
-### 6. Cleanup
-Stop timer on close.
-
-```csharp
-private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
-{
-    _autoHideTimer.Stop();
-    // ... existing code ...
-}
+### 8. Cleanup
+*   All timers are stopped in the `FormClosing` event to prevent resource leaks.
