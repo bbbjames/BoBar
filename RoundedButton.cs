@@ -1,10 +1,24 @@
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 public class RoundedButton : Button
 {
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int BorderRadius { get; set; } = 20;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public SymbolType Symbol { get; set; } = SymbolType.None;
+
+    public enum SymbolType
+    {
+        None,
+        ChevronUp,
+        ChevronDown,
+        ChevronLeft,
+        ChevronRight
+    }
 
     protected override void OnPaint(PaintEventArgs pevent)
     {
@@ -30,6 +44,35 @@ public class RoundedButton : Button
             {
                 graphics.DrawPath(pen, path);
             }
+        }
+
+        if (Symbol != SymbolType.None)
+        {
+            DrawSymbol(graphics);
+        }
+    }
+
+    private void DrawSymbol(Graphics g)
+    {
+        using var pen = new Pen(ForeColor, 2) { StartCap = LineCap.Round, EndCap = LineCap.Round };
+        int cx = Width / 2;
+        int cy = Height / 2;
+        int size = 6;
+
+        switch (Symbol)
+        {
+            case SymbolType.ChevronUp:
+                g.DrawLines(pen, new[] { new Point(cx - size, cy + 3), new Point(cx, cy - 3), new Point(cx + size, cy + 3) });
+                break;
+            case SymbolType.ChevronDown:
+                g.DrawLines(pen, new[] { new Point(cx - size, cy - 3), new Point(cx, cy + 3), new Point(cx + size, cy - 3) });
+                break;
+            case SymbolType.ChevronLeft:
+                g.DrawLines(pen, new[] { new Point(cx + 3, cy - size), new Point(cx - 3, cy), new Point(cx + 3, cy + size) });
+                break;
+            case SymbolType.ChevronRight:
+                g.DrawLines(pen, new[] { new Point(cx - 3, cy - size), new Point(cx + 3, cy), new Point(cx - 3, cy + size) });
+                break;
         }
     }
 }

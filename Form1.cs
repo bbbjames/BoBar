@@ -14,9 +14,40 @@ public partial class Form1 : Form
     private List<LaunchItem> _launchItems = new();
     private bool _loadingPosition;
 
+    // Auto-hide fields
+    private System.Windows.Forms.Timer _autoHideTimer;
+    private System.Windows.Forms.Timer _animationTimer;
+    private bool _isAutoHidden;
+    private bool _autoHideEnabled = false;
+    private Size _expandedSize;
+    private Point _expandedLocation;
+    private RoundedButton _actionButton;
+    private bool _isAnimating;
+
+    // Fade fields
+    private System.Windows.Forms.Timer _fadeTimer;
+    private float _currentFadeOpacity = 1.0f;
+    private float _targetFadeOpacity = 1.0f;
+    private Color _actionButtonBaseBackColor;
+    private Color _actionButtonBaseForeColor;
+    private Color _actionButtonBaseBorderColor;
+
     public Form1()
     {
         InitializeComponent();
+        
+        // Initialize auto-hide timer
+        _autoHideTimer = new System.Windows.Forms.Timer { Interval = 2000 };
+        _autoHideTimer.Tick += AutoHideTimer_Tick;
+
+        // Initialize animation timer
+        _animationTimer = new System.Windows.Forms.Timer { Interval = 16 }; // ~60fps
+        _animationTimer.Tick += AnimationTimer_Tick;
+
+        // Initialize fade timer
+        _fadeTimer = new System.Windows.Forms.Timer { Interval = 20 };
+        _fadeTimer.Tick += FadeTimer_Tick;
+
         LoadLaunchItems();
         CreateDynamicButtons();
         AddButtonSeparators();
@@ -145,6 +176,9 @@ public partial class Form1 : Form
 
     private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
     {
+        _autoHideTimer.Stop();
+        _animationTimer.Stop();
+        _fadeTimer.Stop();
         TrySaveWindowLocation();
     }
 
@@ -164,127 +198,161 @@ public partial class Form1 : Form
         darkModeToolStripMenuItem.Checked = _config.DarkMode;
         ApplyTheme();
 
-        // ADD THIS LINE:
         loadOnStartupToolStripMenuItem.Checked = StartupManager.IsStartupEnabled();
-    }
 
-    private void TrySaveWindowLocation()
-    {
-        _config.AlwaysOnTop = TopMost;
-        _configManager.SaveConfiguration(_config, Location);
-    }
-
-    private void moveToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        MessageBox.Show(this, 
-            "Hold Ctrl and drag any button to move the toolbar.\n\nThe toolbar will snap to screen edges automatically.", 
-            "Move Toolbar", 
-            MessageBoxButtons.OK, 
-            MessageBoxIcon.Information);
-    }
-
-    private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        using var settingsForm = new SettingsForm(_configManager, _launchItems, RefreshButtons);
-        settingsForm.ShowDialog(this);
-    }
-
-    private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        using var aboutForm = new AboutForm();
-        aboutForm.ShowDialog(this);
-    }
-
-    private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        Close();
-    }
-
-    private void alwaysOnTopToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        if (sender is ToolStripMenuItem item)
+        // Initialize Auto-Hide from config
+        var autoHideItem = new ToolStripMenuItem("Auto-hide") { CheckOnClick = true, Checked = _config.AutoHide };
+        autoHideItem.Click += (s, e) => 
         {
-            TopMost = item.Checked;
-            _config.AlwaysOnTop = item.Checked;
+            _config.AutoHide = autoHideItem.Checked;
+            SetAutoHide(autoHideItem.Checked);
+        };
+        contextMenuStrip1.Items.Insert(0, autoHideItem);
+        
+        // Apply initial state
+        SetAutoHide(_config.AutoHide);
+    }
+
+    private void SetAutoHide(bool enabled)
+    {
+        _autoHideEnabled = enabled;
+        _config.AutoHide = enabled; // Ensure config is updated in memory
+        if (enabled)
+        {
+            _autoHideTimer.Start();
+            // Fade In
+            _actionButton.Visible = true;
+            FadeActionButton(1.0f);
+        }
+        else
+        {
+            _autoHideTimer.Stop();
+            if (_isAutoHidden) ExpandWindow();
+            // Fade Out
+            FadeActionButton(0.0f);
         }
     }
 
-    private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+    private void FadeActionButton(float target)
     {
-        if (sender is ToolStripMenuItem item)
-        {
-            _config.DarkMode = item.Checked;
-            ApplyTheme();
-        }
+        _targetFadeOpacity = target;
+        _fadeTimer.Start();
     }
 
-    // ADD THIS ENTIRE METHOD:
-    private void loadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+    private void FadeTimer_Tick(object? sender, EventArgs e)
     {
-        if (sender is ToolStripMenuItem item)
+        float step = 0.1f;
+        if (_currentFadeOpacity < _targetFadeOpacity)
         {
-            bool success = StartupManager.SetStartup(item.Checked);
-            if (!success)
+            _currentFadeOpacity += step;
+            if (_currentFadeOpacity > _targetFadeOpacity) _currentFadeOpacity = _targetFadeOpacity;
+        }
+        else if (_currentFadeOpacity > _targetFadeOpacity)
+        {
+            _currentFadeOpacity -= step;
+            if (_currentFadeOpacity < _targetFadeOpacity) _currentFadeOpacity = _targetFadeOpacity;
+        }
+
+        UpdateActionButtonColor(_currentFadeOpacity);
+
+        if (Math.Abs(_currentFadeOpacity - _targetFadeOpacity) < 0.01f)
+        {
+            _fadeTimer.Stop();
+            if (_targetFadeOpacity <= 0.01f)
             {
-                item.Checked = !item.Checked;
-                MessageBox.Show(this,
-                    "Failed to update startup settings. Please check your permissions.",
-                    "Startup Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                _actionButton.Visible = false;
             }
         }
     }
 
-    private void ApplyTheme()
+    private void UpdateActionButtonColor(float opacity)
     {
-        var buttons = flowLayoutPanel1.Controls.OfType<Button>();
+        if (_actionButton == null || _actionButton.IsDisposed) return;
+        
+        int alpha = (int)(255 * opacity);
+        _actionButton.BackColor = Color.FromArgb(alpha, _actionButtonBaseBackColor);
+        _actionButton.ForeColor = Color.FromArgb(alpha, _actionButtonBaseForeColor);
+        _actionButton.FlatAppearance.BorderColor = Color.FromArgb(alpha, _actionButtonBaseBorderColor);
+    }
 
-        foreach (var button in buttons)
+    private void AutoHideTimer_Tick(object? sender, EventArgs e)
+    {
+        if (Bounds.Contains(Cursor.Position) || _isAutoHidden || !_autoHideEnabled || _isAnimating) return;
+        CollapseWindow();
+    }
+
+    private void CollapseWindow()
+    {
+        _expandedSize = Size;
+        _expandedLocation = Location;
+        _isAutoHidden = true;
+        _isAnimating = true;
+        
+        // Determine target size (just the expand button)
+        // Assuming expand button is 40x40 + margins
+        // We need to ensure expand button is visible.
+        // If we are horizontal, we might want to keep height and shrink width?
+        // Or shrink both?
+        // Let's assume we shrink to the size of the first button + padding.
+        
+        AutoSize = false;
+        _animationTimer.Start();
+    }
+
+    private void ExpandWindow()
+    {
+        if (!_isAutoHidden || _isAnimating) return;
+        
+        _isAutoHidden = false;
+        _isAnimating = true;
+        _animationTimer.Start();
+    }
+
+    private void AnimationTimer_Tick(object? sender, EventArgs e)
+    {
+        // Simple lerp or step
+        var targetSize = _isAutoHidden ? new Size(50, 50) : _expandedSize; // 50x50 to fit button + margin
+        
+        // If we are expanding, we might not know _expandedSize if it changed? 
+        // We saved it in CollapseWindow.
+        
+        var currentWidth = Width;
+        var currentHeight = Height;
+        
+        int stepX = (targetSize.Width - currentWidth) / 4;
+        int stepY = (targetSize.Height - currentHeight) / 4;
+
+        if (Math.Abs(stepX) < 1) stepX = targetSize.Width - currentWidth;
+        if (Math.Abs(stepY) < 1) stepY = targetSize.Height - currentHeight;
+
+        if (currentWidth == targetSize.Width && currentHeight == targetSize.Height)
         {
-            if (_config.DarkMode)
+            _animationTimer.Stop();
+            _isAnimating = false;
+            if (!_isAutoHidden)
             {
-                button.BackColor = Color.FromArgb(45, 45, 45);
-                button.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
-                button.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
-                button.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
-            }
-            else
-            {
-                button.BackColor = SystemColors.MenuBar;
-                button.FlatAppearance.BorderColor = SystemColors.ScrollBar;
-                button.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
-                button.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
+                AutoSize = true;
+                _autoHideTimer.Start();
             }
         }
-    }
-
-    private void FormDrag_MouseDown(object sender, MouseEventArgs e)
-    {
-        if (e.Button == MouseButtons.Left)
+        else
         {
-            NativeMethods.ReleaseCapture();
-            NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0); // WM_NCLBUTTONDOWN + HTCAPTION
+            Size = new Size(currentWidth + stepX, currentHeight + stepY);
         }
     }
 
-    private void Button_MouseDown(object? sender, MouseEventArgs e)
+    protected override void OnMouseEnter(EventArgs e)
     {
-        // Allow moving the form when Ctrl is held and left mouse button is clicked
-        if (e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control))
-        {
-            NativeMethods.ReleaseCapture();
-            NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0);
-        }
+        base.OnMouseEnter(e);
+        if (_isAutoHidden) ExpandWindow();
     }
 
-    private void notifyIcon1_MouseDoubleClick(object? sender, MouseEventArgs e)
+    protected override void OnMouseMove(MouseEventArgs e)
     {
-        this.Show();
-        this.Activate();
+        base.OnMouseMove(e);
+        if (_isAutoHidden) ExpandWindow();
     }
 
-    // Snap to screen edges when moving
     private void Form1_LocationChanged(object? sender, EventArgs e)
     {
         if (_loadingPosition) return;
@@ -322,7 +390,7 @@ public partial class Form1 : Form
 
         // Clear existing dynamic buttons (keep only static ones for now)
         var dynamicButtons = flowLayoutPanel1.Controls.OfType<Button>()
-            .Where(b => b.Tag?.ToString() == "Dynamic")
+            .Where(b => b.Tag?.ToString() == "Dynamic" || b.Tag?.ToString() == "ActionButton")
             .ToList();
 
         foreach (var button in dynamicButtons)
@@ -331,6 +399,59 @@ public partial class Form1 : Form
             button.Dispose();
         }
 
+        // Create Action Button
+        _actionButton = new RoundedButton
+        {
+            Size = new Size(40, 40),
+            Tag = "ActionButton",
+            BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
+            Margin = new Padding(3, 11, 0, 11),
+            Symbol = RoundedButton.SymbolType.ChevronRight, // Default to Right
+            BorderRadius = 10,
+            UseVisualStyleBackColor = false,
+            FlatStyle = FlatStyle.Flat
+        };
+        _actionButton.FlatAppearance.BorderSize = 1;
+        
+        if (_config.DarkMode)
+        {
+            _actionButton.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+            _actionButton.ForeColor = Color.White;
+        }
+        else
+        {
+            _actionButton.FlatAppearance.BorderColor = SystemColors.ScrollBar;
+            _actionButton.ForeColor = Color.Black;
+        }
+
+        _actionButton.Click += (s, e) => 
+        {
+            if (_isAutoHidden) ExpandWindow();
+            else CollapseWindow(); // Allow manual collapse?
+        };
+        _actionButton.MouseEnter += (s, e) => { if (_isAutoHidden) ExpandWindow(); };
+
+        // Capture base colors for fading
+        _actionButtonBaseBackColor = _actionButton.BackColor;
+        _actionButtonBaseForeColor = _actionButton.ForeColor;
+        _actionButtonBaseBorderColor = _actionButton.FlatAppearance.BorderColor;
+
+        // Set initial state based on auto-hide
+        if (!_autoHideEnabled)
+        {
+            _actionButton.Visible = false;
+            _currentFadeOpacity = 0.0f;
+            UpdateActionButtonColor(0.0f);
+        }
+        else
+        {
+            _actionButton.Visible = true;
+            _currentFadeOpacity = 1.0f;
+            UpdateActionButtonColor(1.0f);
+        }
+
+        flowLayoutPanel1.Controls.Add(_actionButton);
+
         // Create buttons for each launch item
         for (int i = 0; i < _launchItems.Count; i++)
         {
@@ -338,12 +459,13 @@ public partial class Form1 : Form
             var button = new RoundedButton
             {
                 Size = new Size(40, 40),
-                TabIndex = i,
+                TabIndex = i + 1,
                 UseVisualStyleBackColor = false,
                 FlatStyle = FlatStyle.Flat,
                 Tag = "Dynamic",
                 BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
-                Margin = new Padding(3, 11, 0, 11)
+                Margin = new Padding(3, 11, 0, 11),
+                BorderRadius = 10
             };
 
             button.FlatAppearance.BorderSize = 1;
@@ -528,6 +650,132 @@ public partial class Form1 : Form
         int g = (int)(color1.G + (color2.G - color1.G) * ratio);
         int b = (int)(color1.B + (color2.B - color1.B) * ratio);
         return Color.FromArgb(r, g, b);
+    }
+
+    private void TrySaveWindowLocation()
+    {
+        _config.AlwaysOnTop = TopMost;
+        // _config.AutoHide is already updated in SetAutoHide and TryLoadWindowLocation
+        _configManager.SaveConfiguration(_config, Location);
+    }
+
+    private void moveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        MessageBox.Show(this, 
+            "Hold Ctrl and drag any button to move the toolbar.\n\nThe toolbar will snap to screen edges automatically.", 
+            "Move Toolbar", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Information);
+    }
+
+    private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        using var settingsForm = new SettingsForm(_configManager, _launchItems, RefreshButtons);
+        settingsForm.ShowDialog(this);
+    }
+
+    private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        using var aboutForm = new AboutForm();
+        aboutForm.ShowDialog(this);
+    }
+
+    private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Close();
+    }
+
+    private void alwaysOnTopToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (sender is ToolStripMenuItem item)
+        {
+            TopMost = item.Checked;
+            _config.AlwaysOnTop = item.Checked;
+        }
+    }
+
+    private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (sender is ToolStripMenuItem item)
+        {
+            _config.DarkMode = item.Checked;
+            ApplyTheme();
+        }
+    }
+
+    private void loadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (sender is ToolStripMenuItem item)
+        {
+            bool success = StartupManager.SetStartup(item.Checked);
+            if (!success)
+            {
+                item.Checked = !item.Checked;
+                MessageBox.Show(this,
+                    "Failed to update startup settings. Please check your permissions.",
+                    "Startup Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+        }
+    }
+
+    private void ApplyTheme()
+    {
+        var buttons = flowLayoutPanel1.Controls.OfType<Button>();
+
+        foreach (var button in buttons)
+        {
+            if (_config.DarkMode)
+            {
+                button.BackColor = Color.FromArgb(45, 45, 45);
+                button.ForeColor = Color.White;
+                button.FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
+                button.FlatAppearance.MouseDownBackColor = Color.FromArgb(30, 30, 30);
+                button.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 60, 60);
+            }
+            else
+            {
+                button.BackColor = SystemColors.MenuBar;
+                button.ForeColor = Color.Black;
+                button.FlatAppearance.BorderColor = SystemColors.ScrollBar;
+                button.FlatAppearance.MouseDownBackColor = SystemColors.ScrollBar;
+                button.FlatAppearance.MouseOverBackColor = SystemColors.MenuBar;
+            }
+        }
+
+        if (_actionButton != null && !_actionButton.IsDisposed)
+        {
+            _actionButtonBaseBackColor = _actionButton.BackColor;
+            _actionButtonBaseForeColor = _actionButton.ForeColor;
+            _actionButtonBaseBorderColor = _actionButton.FlatAppearance.BorderColor;
+            UpdateActionButtonColor(_currentFadeOpacity);
+        }
+    }
+
+    private void FormDrag_MouseDown(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left)
+        {
+            NativeMethods.ReleaseCapture();
+            NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0); // WM_NCLBUTTONDOWN + HTCAPTION
+        }
+    }
+
+    private void Button_MouseDown(object? sender, MouseEventArgs e)
+    {
+        // Allow moving the form when Ctrl is held and left mouse button is clicked
+        if (e.Button == MouseButtons.Left && ModifierKeys.HasFlag(Keys.Control))
+        {
+            NativeMethods.ReleaseCapture();
+            NativeMethods.SendMessage(Handle, 0xA1, 0x2, 0);
+        }
+    }
+
+    private void notifyIcon1_MouseDoubleClick(object? sender, MouseEventArgs e)
+    {
+        this.Show();
+        this.Activate();
     }
 
     private static class NativeMethods

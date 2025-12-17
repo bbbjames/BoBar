@@ -1,4 +1,4 @@
-﻿ using System.Drawing;
+﻿using System.Drawing;
 using System.Text.Json;
 
 namespace BoBar;
@@ -7,6 +7,7 @@ public class AppConfiguration
     public Point? WindowLocation { get; set; }
     public bool AlwaysOnTop { get; set; }
     public bool DarkMode { get; set; } = true;
+    public bool AutoHide { get; set; }
 }
 
 public class ConfigurationManager
@@ -126,6 +127,10 @@ public class ConfigurationManager
                 {
                     config.DarkMode = darkMode;
                 }
+                else if (TryParseBool(trimmed, "AutoHide=", out var autoHide))
+                {
+                    config.AutoHide = autoHide;
+                }
             }
 
             if (x.HasValue && y.HasValue)
@@ -167,7 +172,8 @@ public class ConfigurationManager
                 $"X={windowLocation.X}",
                 $"Y={windowLocation.Y}",
                 $"AlwaysOnTop={config.AlwaysOnTop}",
-                $"DarkMode={config.DarkMode}"
+                $"DarkMode={config.DarkMode}",
+                $"AutoHide={config.AutoHide}"
             };
 
             File.WriteAllLines(_configPath, lines);
