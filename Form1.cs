@@ -288,13 +288,9 @@ public partial class Form1 : Form
         _isAutoHidden = true;
         _isAnimating = true;
         
-        // Determine target size (just the expand button)
-        // Assuming expand button is 40x40 + margins
-        // We need to ensure expand button is visible.
-        // If we are horizontal, we might want to keep height and shrink width?
-        // Or shrink both?
-        // Let's assume we shrink to the size of the first button + padding.
-        
+        // Switch to Expand symbol (Right)
+        if (_actionButton != null) _actionButton.Symbol = RoundedButton.SymbolType.ChevronRight;
+
         AutoSize = false;
         _animationTimer.Start();
     }
@@ -333,6 +329,9 @@ public partial class Form1 : Form
             {
                 AutoSize = true;
                 _autoHideTimer.Start();
+                
+                // Switch to Collapse symbol (Left)
+                if (_actionButton != null) _actionButton.Symbol = RoundedButton.SymbolType.ChevronLeft;
             }
         }
         else
@@ -406,7 +405,7 @@ public partial class Form1 : Form
             Tag = "ActionButton",
             BackColor = _config.DarkMode ? Color.FromArgb(45, 45, 45) : SystemColors.MenuBar,
             Margin = new Padding(3, 11, 0, 11),
-            Symbol = RoundedButton.SymbolType.ChevronRight, // Default to Right
+            Symbol = RoundedButton.SymbolType.ChevronLeft, // Default to Left (Collapsed state)
             BorderRadius = 10,
             UseVisualStyleBackColor = false,
             FlatStyle = FlatStyle.Flat

@@ -8,8 +8,21 @@ public class RoundedButton : Button
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int BorderRadius { get; set; } = 20;
 
+    private SymbolType _symbol = SymbolType.None;
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public SymbolType Symbol { get; set; } = SymbolType.None;
+    public SymbolType Symbol
+    {
+        get => _symbol;
+        set
+        {
+            if (_symbol != value)
+            {
+                _symbol = value;
+                Invalidate();
+            }
+        }
+    }
 
     public enum SymbolType
     {
