@@ -335,7 +335,7 @@ public partial class Form1 : Form
         for (int i = 0; i < _launchItems.Count; i++)
         {
             var item = _launchItems[i];
-            var button = new Button
+            var button = new RoundedButton
             {
                 Size = new Size(40, 40),
                 TabIndex = i,
