@@ -1,6 +1,11 @@
 # BoBar
 
-A lightweight, customizable Windows application launcher with a floating taskbar interface.
+A lightweight floating taskbar application launcher for Windows.
+
+## Download
+Download the latest release from the [Releases Page](https://github.com/bbbjames/BoBar/releases/latest).
+
+*Example of latest build:* [BoBar-0.1.0.12-alpha-win-x64.zip](https://github.com/bbbjames/BoBar/releases/download/v0.1.0.12-alpha/BoBar-0.1.0.12-alpha-win-x64.zip)
 
 ## Features
 
