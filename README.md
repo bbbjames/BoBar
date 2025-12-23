@@ -5,6 +5,8 @@ A lightweight floating taskbar application launcher for Windows.
 ## Download BoBar ⬇️
 Download the latest release [BoBar-0.1.0.12-alpha-win-x64.zip](https://github.com/bbbjames/BoBar/releases/download/v0.1.0.12-alpha/BoBar-0.1.0.12-alpha-win-x64.zip)
 
+Extract the ZIP file and run `BoBar.exe`.
+
 ### BoBar Video
 https://github.com/user-attachments/assets/093a0296-4aae-44af-ab23-a441b3f46527
 
