@@ -2,11 +2,14 @@
 
 A lightweight floating taskbar application launcher for Windows.
 
+> Created by [Bob James AI Dev](https://bobjames.dev/) the [BoBar Toolbar App](https://bobjames.dev/apps/bobar) was buiilt using .NET 10.0 and Windows Forms, with a focus on high-quality icon extraction, shortcut resolution, and user-friendly customization.
+
 ## Download BoBar ⬇️
-Download the latest release [BoBar-0.1.0.12-alpha-win-x64.zip](https://github.com/bbbjames/BoBar/releases/download/v0.1.0.12-alpha/BoBar-0.1.0.12-alpha-win-x64.zip)
+Download the latest alpha release [BoBar-0.1.0.12-alpha-win-x64.zip](https://github.com/bbbjames/BoBar/releases/download/v0.1.0.12-alpha/BoBar-0.1.0.12-alpha-win-x64.zip)
 
 Extract the ZIP file and run `BoBar.exe`.
 
+I use this every day and it's been a great way to quickly launch my most-used applications without cluttering the taskbar. The icon extraction is fantastic - all my apps look crisp and clear, and the drag-and-drop support makes it super easy to add new items. I also love the snap-to-edge feature, it keeps the toolbar neatly tucked away when I'm not using it. Overall, BoBar has become an essential part of my Windows workflow! p.s. it's still in alpha, so expect some rough edges and missing features, but it is stable and very usable.
 ### BoBar Video
 https://github.com/user-attachments/assets/093a0296-4aae-44af-ab23-a441b3f46527
 
